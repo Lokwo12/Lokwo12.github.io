@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Lokwo12 — Quick Links</title>
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;background:#f7f9fc;color:#0b1226;padding:2rem}
+    .card{background:white;border-radius:8px;padding:1rem;margin:1rem 0;box-shadow:0 1px 3px rgba(2,6,23,.08)}
+    a.button{display:inline-block;padding:.6rem 1rem;border-radius:6px;text-decoration:none;background:#2563eb;color:white;margin-right:.5rem}
+    pre{background:#0f172a;color:#e6eef8;padding:.6rem;border-radius:6px;overflow:auto}
+  </style>
+</head>
+<body>
+  <h1>Lokwo12 — Quick Links</h1>
+  <p>Quick links to help you open the site locally or reach the Django admin.</p>
+
+  <div class="card">
+    <a class="button" href="http://127.0.0.1:8000/" target="_blank" rel="noopener">Open site (local)</a>
+    <a class="button" href="/admin/" target="_blank" rel="noopener">Admin /admin/</a>
+    <a class="button" href="https://lokwo12.github.io" target="_blank" rel="noopener">GitHub Pages</a>
+  </div>
+
+  <div class="card">
+    <h2>Render endpoints</h2>
+    <p>Trigger server-side rendering (PDF generation) for common pages:</p>
+    <a class="button" href="/about.pdf" target="_blank" rel="noopener">Render About (PDF)</a>
+    <a class="button" href="/portfolio.pdf" target="_blank" rel="noopener">Render Portfolio (PDF)</a>
+  </div>
+
+  <div class="card">
+    <h2>Notes</h2>
+    <ul>
+      <li>If running the Django development server locally: <code>python manage.py runserver</code> then open <code>http://127.0.0.1:8000/</code>.</li>
+      <li>To change the admin password from the command line run:</li>
+    </ul>
+    <pre>python manage.py changepassword admin</pre>
+    <p>Please change any temporary password after you log in. Avoid committing secrets into the repository.</p>
+  </div>
+
+  <footer style="margin-top:2rem;color:#6b7280">Generated: 2025-10-29</footer>
+</body>
+</html>
