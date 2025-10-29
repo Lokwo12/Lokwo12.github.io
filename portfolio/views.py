@@ -7,7 +7,7 @@ from django.conf import settings
 from django.utils import timezone
 from datetime import datetime, date, time as dtime
 from blog.models import Post
-from .models import Message, Project, Testimonial, Tag, GalleryItem, Subscription
+from .models import Message, Project, Testimonial, Tag, GalleryItem, Subscription, MessageAttachment, Service
 from django.db import models
 from django.db.models import Count
 from .forms import ContactForm, SubscribeForm, TestimonialForm
@@ -101,6 +101,24 @@ def about(request):
 	return render(request, 'about.html')
 
 
+def services(request):
+	"""Public services listing page."""
+	services = Service.objects.filter(is_published=True).order_by('order','title')
+	return render(request, 'services.html', {'services': services})
+
+
+def service_detail(request, slug: str):
+	"""Public service detail page; shows unpublished only to staff/superuser."""
+	svc = get_object_or_404(Service, slug=slug)
+	if not svc.is_published and not (request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser)):
+		# Treat unpublished as 404 for regular users
+		from django.http import Http404
+		raise Http404()
+	# Related services for sidebar/footer suggestions
+	related = Service.objects.filter(is_published=True).exclude(pk=svc.pk).order_by('order','title')[:6]
+	return render(request, 'service.html', {'service': svc, 'related': related})
+
+
 def about_pdf(request):
 	"""Render the About (resume) page as a downloadable PDF using WeasyPrint when possible.
 	Fallbacks:
@@ -178,17 +196,72 @@ def contact(request):
 				attachment=form.cleaned_data.get('attachment')
 			)
 
+			# Handle additional attachments (multiple files input named "attachments")
+			extra_attachments = []
+			try:
+				extra_attachments = request.FILES.getlist('attachments') or []
+			except Exception:
+				extra_attachments = []
+
+			# Validate extra attachments similarly to form rules
+			valid_mimes = {'application/pdf', 'image/png', 'image/jpeg', 'image/gif', 'image/webp'}
+			max_mb = 5
+			filtered_extras = []
+			for f in extra_attachments:
+				try:
+					if f.size > max_mb * 1024 * 1024:
+						continue
+					ct = getattr(f, 'content_type', None)
+					if ct and ct not in valid_mimes:
+						continue
+					filtered_extras.append(f)
+				except Exception:
+					continue
+
+			# Persist extra attachments to DB
+			for f in filtered_extras:
+				try:
+					MessageAttachment.objects.create(message=msg_obj, file=f)
+				except Exception:
+					pass
+
 			subject = f'Portfolio contact from {name}'
 			body = f'From: {name} <{email}>\n\n{message_text}'
 			recipient = getattr(settings, 'CONTACT_EMAIL', None) or getattr(settings, 'DEFAULT_FROM_EMAIL', None)
 			try:
-				attachment = form.cleaned_data.get('attachment')
-				if attachment:
-					email_msg = EmailMessage(subject, body, settings.DEFAULT_FROM_EMAIL, [recipient])
-					email_msg.attach(attachment.name, attachment.read(), getattr(attachment, 'content_type', None))
-					email_msg.send(fail_silently=False)
-				else:
-					send_mail(subject, body, None, [recipient], fail_silently=False)
+				# Always use EmailMessage so we can include multiple attachments
+				email_msg = EmailMessage(subject, body, None, [recipient])
+				# Primary single attachment from form
+				primary_att = form.cleaned_data.get('attachment')
+				if primary_att:
+					email_msg.attach(primary_att.name, primary_att.read(), getattr(primary_att, 'content_type', None))
+				# Additional attachments
+				for f in filtered_extras:
+					try:
+						email_msg.attach(f.name, f.read(), getattr(f, 'content_type', None))
+					except Exception:
+						continue
+				email_msg.send(fail_silently=False)
+				# Send acknowledgment to user (no attachments)
+				try:
+					brand = getattr(settings, 'SITE_NAME', 'Portfolio')
+					from_addr = getattr(settings, 'DEFAULT_FROM_EMAIL', None)
+					ack_subject = f"Thanks for reaching out — {brand}"
+					# Try rendering templates first
+					ctx = {'name': name, 'message': message_text, 'brand_name': brand}
+					try:
+						text_body = render_to_string('emails/contact_ack.txt', ctx)
+						html_body = render_to_string('emails/contact_ack.html', ctx)
+					except Exception:
+						text_body = (
+							f"Hi {name},\n\n"
+							"Thanks for getting in touch. I received your message and will reply within 24–48 hours.\n\n"
+							"Your message:\n" + message_text + "\n\nBest regards,\n" + brand
+						)
+						html_body = None
+					send_mail(ack_subject, text_body, from_addr, [email], fail_silently=True, html_message=html_body)
+				except Exception:
+					pass
 			except Exception:
 				# still show success but message remains in DB for inspection
 				messages.warning(request, 'Received — but email delivery failed. Message saved.')
@@ -196,6 +269,7 @@ def contact(request):
 				messages.success(request, 'Thanks — your message was sent. I will get back to you soon.')
 
 			request.session['last_contact'] = str(now)
+			# Redirect back to contact page (tests expect exact URL without query params)
 			return redirect(reverse('portfolio:contact'))
 	else:
 		form = ContactForm()
@@ -694,6 +768,7 @@ def html_sitemap(request):
 	# Core sections
 	sections = [
 		{'title': 'Home', 'url': reverse('portfolio:home')},
+		{'title': 'Services', 'url': reverse('portfolio:services')},
 		{'title': 'About', 'url': reverse('portfolio:about')},
 		{'title': 'Projects', 'url': reverse('portfolio:project_list')},
 		{'title': 'Blog', 'url': reverse('blog:post_list')},

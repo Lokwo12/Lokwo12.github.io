@@ -5,3 +5,8 @@ reportlab>=4.0,<5
 whitenoise>=6.7
 weasyprint>=62.0
 jazzmin
+
+# Deployment/runtime packages
+gunicorn>=20.1.0
+dj-database-url>=1.0.0
+psycopg2-binary>=2.9

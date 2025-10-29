@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}{{ service.title }} · Services · {{ SITE.brand_name|default:PROFILE.name }}{% endblock %}
+{% block og_title %}{{ service.title }} — Service{% endblock %}
+{% block tw_title %}{{ service.title }} — Service{% endblock %}
+
+{% block content %}
+<section class="container page-section">
+  <nav aria-label="Breadcrumb" style="margin-bottom:10px">
+    <a href="{% url 'portfolio:services' %}">Services</a> / <span aria-current="page">{{ service.title }}</span>
+  </nav>
+  <header class="contact-hero">
+    <span class="eyebrow">Service</span>
+    <h1 class="title">{{ service.title }}</h1>
+    {% if service.price %}<p class="lead" style="margin:8px 0 0"><strong style="color:var(--accent)">{{ service.price }}</strong></p>{% endif %}
+  </header>
+
+  {% if service.icon %}
+  <div class="pd-media" aria-hidden="true">
+    <div class="svc-icon" style="width:56px;height:56px">{{ service.icon }}</div>
+  </div>
+  {% endif %}
+
+  {% if service.description %}
+  <article class="resume-card" style="margin-top:12px">
+    <div class="content">
+      <p>{{ service.description }}</p>
+    </div>
+  </article>
+  {% endif %}
+
+  <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+    <a href="{% url 'portfolio:contact' %}" class="btn">Contact me about this</a>
+    <a href="{% url 'portfolio:services' %}" class="btn secondary">Back to Services</a>
+  </div>
+
+  {% if related %}
+  <section class="page-section" style="margin-top:var(--space-7)">
+    <h2>More services</h2>
+    <div class="services-grid" role="list">
+      {% for s in related %}
+      <article class="service-card" role="listitem">
+        {% if s.icon %}<div class="svc-icon" aria-hidden="true">{{ s.icon }}</div>{% endif %}
+        <h3 class="svc-title"><a href="{{ s.get_absolute_url }}" style="text-decoration:none;color:inherit">{{ s.title }}</a></h3>
+        {% if s.price %}<div class="svc-price">{{ s.price }}</div>{% endif %}
+        {% if s.description %}<p class="svc-desc">{{ s.description|truncatechars:160 }}</p>{% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+</section>
+{% endblock %}

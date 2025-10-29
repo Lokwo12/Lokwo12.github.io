@@ -13,8 +13,14 @@
   {% endif %}
 {% endblock %}
 
+{% block extrahead %}
+  {{ block.super }}
+  {% if SITE and SITE.favicon_url %}
+    <link rel="icon" href="{{ SITE.favicon_url }}">
+  {% endif %}
+{% endblock %}
+
 {% block branding %}
-<<<<<<< HEAD
   <h1 id="site-name">
     <a href="{% url 'admin:index' %}">
       {% if SITE.logo_light_url or SITE.logo_dark_url %}
@@ -26,27 +32,6 @@
       {% if SITE and SITE.brand_name %}{{ SITE.brand_name }} Admin{% else %}Portfolio Admin{% endif %}
     </a>
   </h1>
-=======
-  <h1 id="site-name"><a href="{% url 'admin:index' %}">Portfolio Admin</a></h1>
-{% endblock %}
-
-{% block nav-global %}{% endblock %}
-{% extends "admin/base.html" %}
-{% load static %}
-{% block title %}{{ site_title|default:_('Django site admin') }}{% endblock %}
-{% block extrastyle %}
-{{ block.super }}
-<link rel="stylesheet" href="{% static 'css/admin.css' %}">
-{% endblock %}
-{% block extrahead %}
-{{ block.super }}
-<script src="{% static 'js/admin.js' %}"></script>
-{% endblock %}
-{% block branding %}
-  <h1 id="site-name"><a href="{% url 'admin:index' %}">
-    {% if SITE and SITE.brand_name %}{{ SITE.brand_name }} Admin{% else %}Portfolio Admin{% endif %}
-  </a></h1>
->>>>>>> 4a50831a4077831513d3ce582da087b622ae6bbd
 {% endblock %}
 
 {% block nav-global %}{% endblock %}

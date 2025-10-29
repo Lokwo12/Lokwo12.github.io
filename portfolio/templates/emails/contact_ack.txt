@@ -1,0 +1,9 @@
+Hi {{ name }},
+
+Thanks for getting in touch. I received your message and will reply within 24–48 hours.
+
+Your message:
+{{ message }}
+
+Best regards,
+{{ brand_name|default:'Portfolio' }}

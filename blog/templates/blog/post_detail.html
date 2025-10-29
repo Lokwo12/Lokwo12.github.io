@@ -37,12 +37,12 @@
         </script>
 {% endblock %}
 {% block content %}
-<article class="blog-post container">
-    <nav style="margin-bottom:10px"><a href="/blog/" class="chip">← Back to Blog</a></nav>
-    <header style="margin-bottom:12px">
+<article class="blog-post container page-section">
+    <nav><a href="/blog/" class="chip">← Back to Blog</a></nav>
+    <header>
         <span class="eyebrow">Article</span>
-        <h1 class="title" style="margin:6px 0 8px">{{ post.title }}</h1>
-        <div class="badge-list" style="margin:0 0 8px">
+        <h1 class="title">{{ post.title }}</h1>
+        <div class="badge-list">
             <span class="chip">By {{ post.author }}</span>
             <span class="chip">{{ post.created_at|date:"F j, Y" }}</span>
             <span class="chip">{{ reading_time }} min read</span>
@@ -50,12 +50,12 @@
         </div>
     </header>
     {% if post.thumbnail %}
-    <div class="pd-media" style="margin-bottom:14px"><img src="{{ post.thumbnail.url }}" alt="{{ post.title }} hero" width="{{ post.thumbnail.width }}" height="{{ post.thumbnail.height }}" sizes="(max-width: 880px) 100vw, 360px"></div>
+    <div class="pd-media"><img src="{{ post.thumbnail.url }}" alt="{{ post.title }} hero" width="{{ post.thumbnail.width }}" height="{{ post.thumbnail.height }}" sizes="(max-width: 880px) 100vw, 360px"></div>
     {% endif %}
     <div class="content">{{ post.content|linebreaks }}</div>
     {% with tags=post.tag_list %}
     {% if tags %}
-    <div class="badge-list" aria-label="Tags" style="margin-top:12px">
+    <div class="badge-list" aria-label="Tags">
     {% for t in tags %}
     <a class="chip" href="{% url 'blog:post_list_by_tag' tag=t|slugify %}">#{{ t }}</a>
     {% endfor %}

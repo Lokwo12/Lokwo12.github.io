@@ -1,0 +1,44 @@
+[
+  {
+    "model": "portfolio.service",
+    "pk": 1,
+    "fields": {
+      "key": "f3e1e3f0-dc2b-4f9a-9a3d-1f2e4c7d8a11",
+      "title": "Website Design",
+      "description": "Modern, responsive designs optimized for conversions and accessibility.",
+      "icon": "🎨",
+      "price": "$499+",
+      "is_published": true,
+      "order": 1,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "portfolio.service",
+    "pk": 2,
+    "fields": {
+      "key": "b8a7a6a5-4c3d-2e1f-9a8b-7c6d5e4f3a22",
+      "title": "Full‑stack Development",
+      "description": "Django + React/TypeScript apps with testing, CI/CD, and performance in mind.",
+      "icon": "🚀",
+      "price": "Custom",
+      "is_published": true,
+      "order": 2,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "portfolio.service",
+    "pk": 3,
+    "fields": {
+      "key": "c1d2e3f4-a5b6-7890-1234-abcdefabcdef",
+      "title": "Maintenance & Support",
+      "description": "Ongoing updates, monitoring, backups, and performance tuning.",
+      "icon": "🛠️",
+      "price": "$99/mo",
+      "is_published": true,
+      "order": 3,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  }
+]

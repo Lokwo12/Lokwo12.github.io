@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Services · {{ SITE.brand_name|default:PROFILE.name }}{% endblock %}
+{% block og_title %}Services{% endblock %}
+{% block tw_title %}Services{% endblock %}
+
+
+{% block hero %}
+<section class="container page-section" style="margin-bottom:0">
+  <div class="hero-grid" style="display:flex;align-items:center;gap:32px;flex-wrap:wrap">
+    <div style="flex:1;min-width:260px">
+      <span class="eyebrow">What I offer</span>
+      <h1 class="title">Services</h1>
+      <p class="lead">High-quality, timely, and reliable delivery across web design and development.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<section class="container page-section">
+
+  <div class="services-grid" role="list">
+    {% for s in services %}
+    <article class="service-card" role="listitem">
+      {% if s.icon %}
+      <div class="svc-icon" aria-hidden="true">{{ s.icon }}</div>
+      {% endif %}
+      <h3 class="svc-title">
+        {% if s.slug %}
+          <a href="{{ s.get_absolute_url }}" style="text-decoration:none;color:inherit">{{ s.title }}</a>
+        {% else %}
+          {{ s.title }}
+        {% endif %}
+      </h3>
+      {% if s.price %}<div class="svc-price">{{ s.price }}</div>{% endif %}
+      {% if s.description %}<p class="svc-desc">{{ s.description }}</p>{% endif %}
+    </article>
+    {% empty %}
+      <p>No services are published yet. Check back soon.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

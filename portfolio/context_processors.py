@@ -367,11 +367,13 @@ def site_settings(request):
             'linkedin_url': obj.linkedin_url or None,
             'twitter_url': obj.twitter_url or None,
             'youtube_url': obj.youtube_url or None,
+            'facebook_url': getattr(obj, 'facebook_url', None) or None,
+            'instagram_url': getattr(obj, 'instagram_url', None) or None,
             'calendly_url': obj.calendly_url or None,
             'analytics_measurement_id': obj.analytics_measurement_id or getattr(settings, 'GA_MEASUREMENT_ID', None),
             'consent_required': obj.consent_required,
             'primary_color': getattr(obj, 'primary_color', None) or None,
-        }
+    }
     else:
         data = {
             'brand_name': None,
@@ -395,6 +397,8 @@ def site_settings(request):
             'linkedin_url': None,
             'twitter_url': None,
             'youtube_url': None,
+            'facebook_url': None,
+            'instagram_url': None,
             'calendly_url': None,
             'analytics_measurement_id': getattr(settings, 'GA_MEASUREMENT_ID', None),
             'consent_required': True,

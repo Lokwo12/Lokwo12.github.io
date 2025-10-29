@@ -2,10 +2,10 @@
 {% load static site_extras %}
 {% block title %}Contact — Denis Lokwo{% endblock %}
 {% block content %}
-<section class="container" style="margin:48px auto;">
+<section class="container page-section">
     <header class="contact-hero fade-up">
         <span class="eyebrow">Get in touch</span>
-        <h1 class="title" style="margin-bottom:8px;">{{ SITE.contact_title|default:"Let's build something great" }}</h1>
+    <h1 class="title">{{ SITE.contact_title|default:"Let's build something great" }}</h1>
         <p class="lead">{{ SITE.contact_subtitle|default:"Have a question, idea, or project? Send a message and I'll reply within 24–48 hours." }}</p>
     </header>
 
@@ -64,56 +64,134 @@
                     {% endfor %}
                 </div>
             {% endif %}
-
-                        <form method="post" class="contact-form" novalidate enctype="multipart/form-data" aria-label="Contact form">
+            {% with was_sent=request.GET.sent %}
+                        <form method="post" class="contact-form" {% if was_sent %}data-sent="1"{% endif %} novalidate enctype="multipart/form-data" aria-label="Contact form">
                 {% csrf_token %}
+        {# Render hidden fields (honeypot) #}
+        {% for hf in form.hidden_fields %}{{ hf }}{% endfor %}
                 <div class="form-grid">
                     {% for field in form.visible_fields %}
                         <div class="form-field{% if field.errors %} has-error{% endif %}">
-                            <label for="{{ field.id_for_label }}">
-                                {{ field.label }}
-                                {% if field.field.required %}<span class="req" aria-hidden="true">*</span>{% endif %}
-                            </label>
-                            {{ field }}
+                            {% if field.name == 'privacy_agree' %}
+                                <label for="{{ field.id_for_label }}" style="display:flex;gap:8px;align-items:flex-start">
+                                    {{ field }}
+                                    <span>
+                                        I agree to the <a href="{% url 'portfolio:privacy' %}" target="_blank" rel="noopener">Privacy Policy</a>
+                                        {% if field.field.required %}<span class="req" aria-hidden="true">*</span>{% endif %}
+                                    </span>
+                                </label>
+                            {% else %}
+                                <label for="{{ field.id_for_label }}">
+                                    {{ field.label }}
+                                    {% if field.field.required %}<span class="req" aria-hidden="true">*</span>{% endif %}
+                                </label>
+                                {{ field }}
+                            {% endif %}
                             {% if field.help_text %}<small class="help">{{ field.help_text }}</small>{% endif %}
                             {% if field.errors %}
                                 <div class="field-error">{{ field.errors|striptags }}</div>
                             {% endif %}
                         </div>
                     {% endfor %}
+                    {# Extra multiple attachments input (optional) #}
+                    <div class="form-field">
+                        <label for="id_attachments">Additional files (optional)</label>
+                        <input type="file" id="id_attachments" name="attachments" accept=".pdf,image/*" multiple>
+                        <small class="help">You can add more files (PDF or images, max 5MB each).</small>
+                    </div>
                 </div>
-                                <div class="actions">
-                                        <button type="submit" class="btn">Send Message</button>
-                                        <a class="btn secondary" href="mailto:{{ SITE.email|default:PROFILE.email }}">Email directly</a>
-                                </div>
+                <div class="actions">
+                    <button type="submit" class="btn">Send Message</button>
+                    <a class="btn secondary" href="mailto:{{ SITE.email|default:PROFILE.email }}">Email directly</a>
+                    {% with li_fallback=PROFILE.links|get:'linkedin' %}
+                    {% if SITE.linkedin_url or li_fallback %}
+                    <a class="btn secondary" href="{{ SITE.linkedin_url|default:li_fallback }}" target="_blank" rel="noopener">LinkedIn</a>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+                <p class="help">By sending a message, you agree to the <a href="{% url 'portfolio:privacy' %}">Privacy Policy</a>.</p>
             </form>
+            {% if was_sent %}
+            <div class="message success">Thank you! Your message was sent. I’ll reply within 24–48 hours.</div>
+            {% endif %}
+            {% endwith %}
         </section>
     </div>
 </section>
 {% if SITE.calendly_url %}
-<section class="container" style="margin:24px auto;">
+<section class="container page-section">
     <div class="contact-card" aria-label="Booking widget">
-        <h3 style="margin-top:0;margin-bottom:10px">Book a call</h3>
+    <h3>Book a call</h3>
         <div class="booking-wrapper">
             <div class="calendly-inline-widget booking-embed" data-url="{{ SITE.calendly_url }}"></div>
             <div class="embed-skeleton" aria-hidden="true">Loading scheduler…</div>
         </div>
-        <p class="help" style="margin-top:8px">If the embed doesn’t load, open <a href="{{ SITE.calendly_url }}" target="_blank" rel="noopener">Calendly</a> in a new tab.</p>
+    <p class="help">If the embed doesn’t load, open <a href="{{ SITE.calendly_url }}" target="_blank" rel="noopener">Calendly</a> in a new tab.</p>
     </div>
 </section>
 {% else %}
-<section class="container" style="margin:24px auto;">
+<section class="container page-section">
     <div class="contact-card" aria-label="Booking widget (not configured)">
-        <h3 style="margin-top:0;margin-bottom:10px">Book a call</h3>
+    <h3>Book a call</h3>
         <p class="help">Booking is not configured yet. Set CALENDLY_URL in your environment to enable the inline scheduler. You can still visit <a href="https://calendly.com/" target="_blank" rel="noopener">Calendly</a>.</p>
     </div>
 </section>
 {% endif %}
+
+{# Optional map embed based on location #}
+{% with loc=SITE.location|default:PROFILE.location %}
+{% if loc %}
+<section class="container page-section">
+    <div class="contact-card" aria-label="Map">
+    <h3>Location</h3>
+        <div style="position:relative;overflow:hidden;border-radius:12px;border:1px solid var(--border)">
+            <iframe title="Map" src="https://www.google.com/maps?q={{ loc|urlencode }}&output=embed" width="100%" height="320" style="border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    <p class="help">Approximate location: {{ loc }}</p>
+    </div>
+    </section>
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.thankyou-overlay{position:fixed;inset:auto 16px 16px 16px;z-index:90;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;box-shadow:0 10px 30px rgba(2,6,23,.35);display:none}
+.thankyou-overlay.show{display:block;animation:ty-enter .25s ease}
+@keyframes ty-enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.thankyou-overlay .ty-actions{display:flex;gap:10px;margin-top:8px}
+</style>
 {% endblock %}
 
 {% block extra_js %}
+{{ block.super }}
 <script src="{% static 'js/contact.js' %}"></script>
 {% if SITE.calendly_url %}
 <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
 {% endif %}
+<script>
+    (function(){
+        window.addEventListener('DOMContentLoaded', function(){
+            const container = document.querySelector('.contact-card');
+            if(!container) return;
+            const hasSuccess = !!document.querySelector('.message.success');
+            let ov = document.getElementById('thankyou-overlay');
+            if(!ov){
+                ov = document.createElement('div');
+                ov.id = 'thankyou-overlay';
+                ov.className = 'thankyou-overlay';
+                ov.innerHTML = '<div><strong>Thank you!</strong> Your message was sent. I\'ll get back to you within 24–48 hours.</div>'+
+                                             '<div class="ty-actions"><button type="button" class="btn secondary" id="ty-close">Dismiss</button>'+
+                                             '<a href="/" class="btn">Back to Home</a></div>';
+                document.body.appendChild(ov);
+                const btn = ov.querySelector('#ty-close');
+                if(btn) btn.addEventListener('click', ()=> ov.classList.remove('show'));
+            }
+            if(hasSuccess){
+                ov.classList.add('show');
+                setTimeout(()=>{ ov.classList.remove('show'); }, 5000);
+            }
+        });
+    })();
+</script>
 {% endblock %}

@@ -10,14 +10,14 @@
     <meta name="twitter:image" content="{% absolute_static 'images/og-default.svg' %}">
 {% endblock %}
 {% block content %}
-<section class="blog-list container">
-    <header class="contact-hero" style="margin-bottom:16px;">
+<section class="blog-list container page-section">
+    <header class="contact-hero">
         <span class="eyebrow">Insights & Updates</span>
-        <h2 class="title" style="margin:4px 0 8px">Blog</h2>
+        <h2 class="title">Blog</h2>
         <p class="lead">Articles, tutorials, and notes on building modern web apps.</p>
     </header>
 
-    <form method="get" class="project-filter" style="margin:0 0 24px;display:flex;gap:12px;flex-wrap:wrap">
+    <form method="get" class="project-filter" style="display:flex;gap:12px;flex-wrap:wrap">
         <input type="text" name="q" value="{{ q }}" placeholder="Search articles..." style="padding:10px 12px;border-radius:10px;border:1px solid var(--border);min-width:220px;flex:1">
         <button type="submit" class="btn secondary">Search</button>
     </form>
@@ -26,13 +26,13 @@
         <article class="blog-post">
             <div class="bc-grid">
                 <div class="bc-content">
-                    <h3 style="margin:0 0 6px"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
-                    <div class="badge-list" style="margin-bottom:8px">
+                    <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+                    <div class="badge-list">
                         <span class="chip">By {{ post.author }}</span>
                         <span class="chip">{{ post.created_at|date:"F j, Y" }}</span>
                         {% if post.category %}<a class="chip" href="{% url 'blog:post_list_by_category' category=post.category|slugify %}">{{ post.category }}</a>{% endif %}
                     </div>
-                    <p style="margin:0 0 10px">{{ post.content|truncatewords:42 }}</p>
+                    <p>{{ post.content|truncatewords:42 }}</p>
                     {% with tags=post.tag_list %}
                     {% if tags %}
                     <div class="badge-list" aria-label="Tags">
@@ -42,7 +42,7 @@
                     </div>
                     {% endif %}
                     {% endwith %}
-                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+                    <div style="display:flex;gap:10px;flex-wrap:wrap">
                         <a class="btn" href="{{ post.get_absolute_url }}">Read article</a>
                     </div>
                 </div>

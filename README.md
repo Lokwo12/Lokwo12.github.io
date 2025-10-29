@@ -90,6 +90,8 @@ python manage.py runserver
 
 Open http://127.0.0.1:8000 and the admin at http://127.0.0.1:8000/admin
 
+Tip: environment variables from a local `.env` file are auto‑loaded (python‑dotenv). Copy `.env.example` to `.env` and fill your values for SMTP, analytics, and host settings.
+
 ## Initial admin setup
 
 1) Site settings
@@ -170,6 +172,21 @@ Keep `/media/` persisted. If deploying to containers, mount a volume or use a cl
 - `GA_MEASUREMENT_ID` = G-XXXXXXX (enables analytics after consent)
 - `CALENDLY_URL` = https://calendly.com/your-link (optional)
 - `CAREER_START_YEAR` = 2020 (for experience years on About)
+
+Repo structure (single project):
+
+```
+.
+├── blog/
+├── myportfolio/        # Django project (settings, urls, wsgi/asgi)
+├── portfolio/          # App (models, views, templates, static)
+├── media/              # Uploaded files (local dev)
+├── requirements.txt
+├── manage.py
+└── .env.example
+```
+
+Home carousel note: autoplay is disabled by default. Navigation works with arrows/dots only.
 
 Media & static
 

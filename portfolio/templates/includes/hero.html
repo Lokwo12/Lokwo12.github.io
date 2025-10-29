@@ -1,0 +1,49 @@
+{% load static site_extras %}
+<section class="hero container page-section">
+    <div class="hero-grid">
+        <div class="intro">
+            <span class="eyebrow fade-up stagger-1">{{ SITE.home_eyebrow|default:PROFILE.title|default:'Software Developer' }}</span>
+            <h1 class="title fade-up stagger-2">{{ SITE.hero_heading|default:"Hi, I'm "|add:PROFILE.name|add:" — I build delightful web apps for the modern web." }}</h1>
+            <p class="lead fade-up stagger-3">{{ SITE.hero_subheading|default:PROFILE.intro|default:PROFILE.summary|default:"I'm a full-stack developer focused on performance, accessibility, and clean UX. I enjoy turning ideas into production-quality code and mentoring junior engineers." }}</p>
+
+            <div class="roles-line pill fade-up stagger-3" aria-label="Rotating roles">
+                <span class="sparkle-icon" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2l1.7 4.6L18 8.3l-4.3 1.7L12 14l-1.7-4.1L6 8.3l4.3-1.7L12 2zm7 6l.9 2.4L22 12l-2.1 1.6L19 16l-.9-2.4L16 12l2.1-1.6L19 8zm-14 0l.9 2.4L8 12l-2.1 1.6L5 16l-.9-2.4L2 12l2.1-1.6L5 8z"/>
+                    </svg>
+                </span>
+                <span class="roles-label">Focus:</span>
+                <span class="type-wrap"><span data-roles="{{ SITE.home_roles|default:'React Developer|Django Developer|Open Source Contributor' }}" data-speed="80" data-pause="800" data-back-pause="350"></span></span>
+            </div>
+
+            <div class="cta-row fade-up stagger-3">
+                <a class="btn" href="#projects">View Projects</a>
+                <a class="btn secondary" href="/contact/">Get in touch</a>
+                {% if SITE.resume_url %}
+                <a class="btn secondary" href="{{ SITE.resume_url }}" download>Download CV</a>
+                {% else %}
+                <a class="btn secondary" href="{% static 'resume/Denis_Lokwo_Resume.pdf' %}" download>Download CV</a>
+                {% endif %}
+                <a class="btn" href="{% url 'portfolio:portfolio_pdf' %}">Download Portfolio PDF</a>
+            </div>
+        </div>
+
+        <div style="display:flex;gap:18px;align-items:flex-start">
+            <div class="profile-card fade-up stagger-1">
+                <div class="avatar">
+                    {% if SITE.home_avatar_url %}
+                    <img src="{{ SITE.home_avatar_url }}" alt="{{ PROFILE.name }} avatar">
+                    {% elif PROFILE.avatar_url %}
+                    <img src="{{ PROFILE.avatar_url }}" alt="{{ PROFILE.name }} avatar">
+                    {% else %}
+                    <img src="{% static 'images/avatar.svg' %}" alt="{{ PROFILE.name }} avatar">
+                    {% endif %}
+                </div>
+                <div class="profile-meta">
+                    <h4>{{ PROFILE.name }}</h4>
+                    <p>{{ PROFILE.title|default:'Full-stack developer — Django, React, TypeScript, PostgreSQL.' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

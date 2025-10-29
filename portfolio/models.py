@@ -19,6 +19,21 @@ class Message(models.Model):
         return f"Message from {self.name} <{self.email}> on {self.created_at:%Y-%m-%d}"
 
 
+class MessageAttachment(models.Model):
+    message = models.ForeignKey(Message, related_name='attachments', on_delete=models.CASCADE)
+    file = models.FileField(upload_to='messages/')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at', 'id']
+
+    def __str__(self):
+        try:
+            return f"Attachment for {self.message_id}: {self.file.name}"
+        except Exception:
+            return self.file.name or 'Attachment'
+
+
 class Project(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=220, unique=True)
@@ -287,6 +302,8 @@ class SiteSettings(models.Model):
     linkedin_url = models.URLField(blank=True)
     twitter_url = models.URLField(blank=True)
     youtube_url = models.URLField(blank=True)
+    facebook_url = models.URLField(blank=True)
+    instagram_url = models.URLField(blank=True)
     calendly_url = models.URLField(blank=True)
     analytics_measurement_id = models.CharField(max_length=40, blank=True, help_text="Google Analytics 4 Measurement ID")
     consent_required = models.BooleanField(default=True)
@@ -307,6 +324,49 @@ class SiteSettings(models.Model):
 
     def __str__(self):
         return "Site Settings"
+
+
+class Service(models.Model):
+    """Services offered, editable via admin and displayed on Services page."""
+    key = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    title = models.CharField(max_length=150)
+    slug = models.SlugField(max_length=200, unique=True, blank=True, help_text="URL slug; auto-generated from title if left blank")
+    description = models.TextField(blank=True)
+    icon = models.CharField(max_length=60, blank=True, help_text="Optional emoji or CSS icon class, e.g. 🚀 or lucide-code")
+    price = models.CharField(max_length=60, blank=True, help_text="Optional price text, e.g. $499+ or Custom")
+    is_published = models.BooleanField(default=True)
+    order = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['order', 'title']
+        verbose_name = 'Service'
+        verbose_name_plural = 'Services'
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        if getattr(self, 'slug', None):
+            return reverse('portfolio:service_detail', args=[self.slug])
+        # Fallback to listing if slug not set yet
+        return reverse('portfolio:services')
+
+    def save(self, *args, **kwargs):
+        # Auto-generate slug from title if missing
+        if (not getattr(self, 'slug', None)) and getattr(self, 'title', None):
+            from django.utils.text import slugify
+            base = slugify(self.title)[:190] or None
+            if base:
+                slug = base
+                i = 2
+                # ensure uniqueness
+                while Service.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                    suffix = f"-{i}"
+                    slug = (base[: (190 - len(suffix))] + suffix)
+                    i += 1
+                self.slug = slug
+        return super().save(*args, **kwargs)
 
 
 class GalleryItem(models.Model):

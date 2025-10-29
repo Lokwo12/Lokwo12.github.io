@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Message, Project, Testimonial, Tag, Profile, ExperienceItem, EducationItem, CertificationItem, AwardItem, SiteSettings, AchievementItem, SkillItem, GalleryItem, Subscription
+from .models import Message, Project, Testimonial, Tag, Profile, ExperienceItem, EducationItem, CertificationItem, AwardItem, SiteSettings, AchievementItem, SkillItem, GalleryItem, Subscription, Service
 from django.core.mail import send_mail
 from django.conf import settings
 from django.shortcuts import redirect
@@ -332,7 +332,7 @@ class SiteSettingsAdmin(admin.ModelAdmin):
 		('Homepage', {'fields': ('home_avatar','show_testimonials_home','testimonials_home_limit')}),
 		('Hero', {'fields': ('home_eyebrow','hero_heading','hero_subheading','home_roles','resume_file')}),
 		('Contact', {'fields': ('contact_title','contact_subtitle','email','phone','location','calendly_url')}),
-	('Social', {'fields': ('github_url','linkedin_url','twitter_url','youtube_url')}),
+	('Social', {'fields': ('github_url','linkedin_url','twitter_url','youtube_url','facebook_url','instagram_url')}),
 		('Analytics', {'fields': ('analytics_measurement_id','consent_required')}),
 		('Timestamps', {'fields': ('key','created_at','updated_at')}),
 	)
@@ -348,6 +348,20 @@ class SiteSettingsAdmin(admin.ModelAdmin):
 admin.site.site_header = "Portfolio Admin"
 admin.site.site_title = "Portfolio Admin"
 admin.site.index_title = "Site Management"
+@admin.register(Service)
+class ServiceAdmin(admin.ModelAdmin):
+	list_display = ('title','price','is_published','order')
+	list_editable = ('is_published','order')
+	search_fields = ('title','description','price')
+	list_filter = ('is_published',)
+	ordering = ('order','title')
+	readonly_fields = ('key','created_at')
+	prepopulated_fields = {'slug': ('title',)}
+	fieldsets = (
+		(None, {'fields': ('title','slug','icon','price','description')}),
+		('Meta', {'fields': ('is_published','order','key','created_at')}),
+	)
+
 
 
 @admin.register(GalleryItem)

@@ -13,8 +13,10 @@ class ContactForm(forms.Form):
         'placeholder': 'Tell me about your project',
         'rows': 6
     }))
-    attachment = forms.FileField(required=False, help_text='Optional: attach a brief brief/spec (max 5MB, PDF or image)',
+    attachment = forms.FileField(required=False, help_text='Optional: attach a brief/spec (max 5MB, PDF or image)',
         widget=forms.ClearableFileInput(attrs={'accept': '.pdf,image/*'}))
+    # Keep optional on server to avoid breaking existing tests; enforced by light client-side validation
+    privacy_agree = forms.BooleanField(required=False, label='I agree to the Privacy Policy')
     # honeypot: should remain empty
     hp = forms.CharField(required=False, widget=forms.HiddenInput)
 

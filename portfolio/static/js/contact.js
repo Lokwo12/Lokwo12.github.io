@@ -25,6 +25,33 @@
       info.setAttribute('data-effect', effect2);
       requestAnimationFrame(() => info.classList.add(effect2));
     }
+
+    // Client-side light validation for required fields
+    form.addEventListener('submit', function(ev){
+      const fields = form.querySelectorAll('input, textarea, select');
+      let firstInvalid = null;
+      fields.forEach(el => {
+        el.removeAttribute('aria-invalid');
+      });
+      for (const el of fields){
+        // Skip hidden honeypot
+        if(el.type === 'hidden') continue;
+        if (el.hasAttribute('required') && !el.value){
+          el.setAttribute('aria-invalid','true');
+          if(!firstInvalid) firstInvalid = el;
+        }
+      }
+      if(firstInvalid){
+        ev.preventDefault();
+        firstInvalid.focus({preventScroll:false});
+      }
+    });
+
+    // If sent flag present, disable inputs and show subtle state
+    if(form.dataset.sent === '1'){
+      const controls = form.querySelectorAll('input, textarea, select, button');
+      controls.forEach(el => { el.disabled = true; el.setAttribute('aria-disabled','true'); });
+    }
   });
 })();
 

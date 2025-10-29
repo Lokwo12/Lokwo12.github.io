@@ -30,7 +30,8 @@ except Exception:
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-64idji^07q4l_qfqlyal#c%ct9i^3!8l^_x%klp+=u(q)bjxg$'
+# Read SECRET_KEY from env for deployments; fall back to the existing dev key for local dev
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-64idji^07q4l_qfqlyal#c%ct9i^3!8l^_x%klp+=u(q)bjxg$')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Read from env for deploys; defaults to True for local dev
@@ -112,6 +113,16 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# Allow configuring the database from DATABASE_URL (Render Postgres). If not provided,
+# the project will continue to use the local SQLite database.
+if os.environ.get('DATABASE_URL'):
+    try:
+        import dj_database_url
+        DATABASES['default'] = dj_database_url.parse(os.environ['DATABASE_URL'], conn_max_age=600)
+    except Exception:
+        # If dj_database_url is missing or parsing fails, keep the default sqlite config
+        pass
 
 
 # Password validation

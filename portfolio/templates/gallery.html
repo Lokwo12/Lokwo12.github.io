@@ -10,10 +10,10 @@
     <meta name="twitter:image" content="{% absolute_static 'images/og-default.svg' %}">
 {% endblock %}
 {% block content %}
-<section class="container" style="margin-top:48px;">
-    <header class="contact-hero" style="margin-bottom:16px;">
+<section class="container page-section">
+    <header class="contact-hero">
         <span class="eyebrow">Visuals</span>
-        <h2 class="title" style="margin:4px 0 8px">Gallery</h2>
+        <h2 class="title">Gallery</h2>
         <p class="lead">A quick visual overview from projects and posts.</p>
     </header>
 
@@ -24,7 +24,7 @@
         <a class="chip {% if src == 'custom' %}selected{% endif %}" href="?src=custom">Custom</a>
     </div>
 
-    <div class="gallery-grid" style="margin-top:14px">
+    <div class="gallery-grid">
         {% for it in items %}
         <article class="gallery-item">
             <a href="{{ it.img }}" data-link="{{ it.url }}" data-desc="{{ it.desc|default:'' }}" aria-label="Open {{ it.title }}" title="{{ it.title }}{% if it.desc %} — {{ it.desc|striptags|truncatewords:20 }}{% endif %}">
@@ -41,7 +41,7 @@
     </div>
 
     {% if page_obj %}
-    <nav class="pagination" aria-label="Pagination" style="margin-top:12px">
+    <nav class="pagination" aria-label="Pagination">
         {% if page_obj.has_previous %}
             <a class="page-link" href="?src={{ src }}&page={{ page_obj.previous_page_number }}">Previous</a>
         {% else %}

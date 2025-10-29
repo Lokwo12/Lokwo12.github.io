@@ -5,7 +5,7 @@
 {% block title %}Home — Denis Lokwo{% endblock %}
 
 {% block content %}
-<section class="hero container">
+<section class="hero container page-section">
 	<div class="hero-grid">
 		<div class="intro">
 			<span class="eyebrow fade-up stagger-1">{{ SITE.home_eyebrow|default:PROFILE.title|default:'Software Developer' }}</span>
@@ -22,7 +22,7 @@
 				<span class="type-wrap"><span data-roles="{{ SITE.home_roles|default:'React Developer|Django Developer|Open Source Contributor' }}" data-speed="80" data-pause="800" data-back-pause="350"></span></span>
 			</div>
 
-            <div class="cta-row fade-up stagger-3">
+			<div class="cta-row fade-up stagger-3">
 				<a class="btn" href="#projects">View Projects</a>
 				<a class="btn secondary" href="/contact/">Get in touch</a>
 				{% if SITE.resume_url %}
@@ -34,28 +34,28 @@
 			</div>
 		</div>
 
-			<div style="display:flex;gap:18px;align-items:flex-start">
-				<div class="profile-card fade-up stagger-1">
-					<div class="avatar">
-						{% if SITE.home_avatar_url %}
-						<img src="{{ SITE.home_avatar_url }}" alt="{{ PROFILE.name }} avatar">
-						{% elif PROFILE.avatar_url %}
-						<img src="{{ PROFILE.avatar_url }}" alt="{{ PROFILE.name }} avatar">
-						{% else %}
-						<img src="{% static 'images/avatar.svg' %}" alt="{{ PROFILE.name }} avatar">
-						{% endif %}
-					</div>
-					<div class="profile-meta">
-						<h4>{{ PROFILE.name }}</h4>
-						<p>{{ PROFILE.title|default:'Full-stack developer — Django, React, TypeScript, PostgreSQL.' }}</p>
-					</div>
+		<div style="display:flex;gap:18px;align-items:flex-start">
+			<div class="profile-card fade-up stagger-1">
+				<div class="avatar">
+					{% if SITE.home_avatar_url %}
+					<img src="{{ SITE.home_avatar_url }}" alt="{{ PROFILE.name }} avatar">
+					{% elif PROFILE.avatar_url %}
+					<img src="{{ PROFILE.avatar_url }}" alt="{{ PROFILE.name }} avatar">
+					{% else %}
+					<img src="{% static 'images/avatar.svg' %}" alt="{{ PROFILE.name }} avatar">
+					{% endif %}
+				</div>
+				<div class="profile-meta">
+					<h4>{{ PROFILE.name }}</h4>
+					<p>{{ PROFILE.title|default:'Full-stack developer — Django, React, TypeScript, PostgreSQL.' }}</p>
 				</div>
 			</div>
+		</div>
 	</div>
 </section>
 
 {% if featured_project %}
-<section class="container" style="padding:10px 0 10px">
+<section class="container page-section">
 	<div class="featured-project">
 		<div class="fp-content">
 			<h2 class="fp-title">Featured Project — {{ featured_project.title }}</h2>
@@ -63,7 +63,7 @@
 			<p class="lead">{{ featured_project.description|truncatewords:36 }}</p>
 			{% with techs=featured_project.tech_list %}
 			{% if techs %}
-				<div class="tech-chips" style="margin:8px 0 14px">
+				<div class="tech-chips">
 					{% for t in techs %}<span class="chip">{% tech_icon t 16 %} {{ t }}</span>{% endfor %}
 				</div>
 			{% endif %}
@@ -82,11 +82,11 @@
 		</div>
 		{% endif %}
 	</div>
-	<hr style="border:none;border-top:1px solid var(--border);margin:18px 0 0" />
+	<hr style="border:none;border-top:1px solid var(--border)" />
 </section>
 {% endif %}
 
-	<section class="container" style="padding:10px 0 0">
+	<section class="container page-section" aria-label="Quick stats">
 		<div class="stats-row">
 			<div class="stat">
 				<div class="stat-value">{{ stats.years }}+</div>
@@ -105,8 +105,8 @@
 
 	{# Tech Stack wall #}
 	{% if PROFILE.skills or PROFILE.tools %}
-	<section class="container" style="padding:24px 0 10px">
-		<h2 style="margin:0 0 12px">Tech Stack</h2>
+	<section class="container page-section">
+    	<h2>Tech Stack</h2>
 		<div class="tech-wall">
 			{% if PROFILE.skills %}
 				{% for t in PROFILE.skills %}
@@ -129,8 +129,8 @@
 	{% endif %}
 
 	<!-- Projects -->
-	<section id="projects" class="container" style="padding:50px 0">
-		<h2 style="margin-top:0">Selected Projects</h2>
+	<section id="projects" class="container page-section" aria-label="Selected projects">
+		<h2>Selected Projects</h2>
 		{% if projects %}
 		<div class="carousel" aria-roledescription="carousel" tabindex="0" aria-label="Selected Projects carousel">
 			<div class="carousel-track" role="group" aria-label="Project slides">
@@ -153,7 +153,7 @@
 					</div>
 					{% endif %}
 					{% endwith %}
-					<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+					<div style="display:flex;gap:10px;flex-wrap:wrap">
 						<a class="btn" href="{{ p.get_absolute_url }}" data-ev="case_study_open" data-project="{{ p.title }}" data-slug="{{ p.slug }}">Read case study</a>
 						{% if p.url %}<a class="btn secondary" href="{{ p.url }}" target="_blank" rel="noopener" data-ev="project_view_live" data-project="{{ p.title }}" data-url="{{ p.url }}">View live</a>{% endif %}
 					</div>
@@ -165,15 +165,15 @@
 				<button class="carousel-next" aria-label="Next slide">›</button>
 			</div>
 		</div>
-		<a class="btn secondary" style="margin-top:16px" href="/projects/">Browse all projects</a>
+		<a class="btn secondary" href="/projects/">Browse all projects</a>
 		{% else %}
 		<p class="muted">No projects yet.</p>
 		{% endif %}
 	</section>
 
 	{% if top_tags %}
-	<section class="container" style="padding:10px 0 30px">
-		<h3 style="margin:0 0 10px">Top Technologies</h3>
+	<section class="container page-section">
+		<h3>Top Technologies</h3>
 		<div class="tech-chips">
 			{% for t in top_tags %}<span class="chip">{% tech_icon t 16 %} {{ t }}</span>{% endfor %}
 		</div>
@@ -182,9 +182,9 @@
 
 	<!-- Testimonials -->
 	{% if testimonials_enabled %}
-	<section class="container" style="padding:20px 0 10px">
+	<section class="container page-section">
 		{% if testimonials %}
-		<h2 style="margin-top:0">What clients say</h2>
+		<h2>What clients say</h2>
 		<div class="cards-grid testimonials-grid">
 			{% for t in testimonials %}
 			<article class="profile-card testimonial-card" data-effect="zoom-in">
@@ -194,7 +194,7 @@
 			</article>
 			{% endfor %}
 		</div>
-		<a class="btn secondary" href="{% url 'portfolio:testimonials' %}" style="margin-top:14px">See all testimonials</a>
+		<a class="btn secondary" href="{% url 'portfolio:testimonials' %}">See all testimonials</a>
 		{% endif %}
 	</section>
 	{% endif %}
@@ -209,8 +209,8 @@
 <!-- Contact section removed: dedicated /contact/ page is now the primary contact entry point -->
 
 	<!-- Blog preview section -->
-<section class="blog-list container" style="margin-top:48px;">
-    <h2>Latest Blog Posts</h2>
+<section class="blog-list container page-section">
+	<h2>Latest Blog Posts</h2>
     {% with posts=posts|default:None %}
     {% if posts %}
         {% for post in posts|slice:":3" %}

@@ -80,6 +80,9 @@ def tech_icon(name: str, size: int = 18) -> str:
         'docker':        ("Do", "#0DB7ED", "#0891B2"),
         'git':           ("Gt", "#F1502F", "#F97316"),
         'github':        ("Gh", "#1F2937", "#6B7280"),
+        'linkedin':      ("In", "#0A66C2", "#0E7490"),
+        'twitter':       ("Tw", "#1DA1F2", "#0284C7"),
+        'youtube':       ("Yt", "#FF0000", "#DC2626"),
         'node':          ("Nd", "#3C873A", "#16A34A"),
         'node.js':       ("Nd", "#3C873A", "#16A34A"),
         'next':          ("Nx", "#111827", "#4B5563"),
@@ -164,3 +167,6 @@ def get_item(obj, key):
         return getattr(obj, str(key), None)
     except Exception:
         return None
+
+
+
