@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Recommend — Share your feedback{% endblock %}
+
+{% block content %}
+<section class="container" style="margin:36px auto;max-width:900px">
+  <h1 style="margin:0 0 10px">Recommend me</h1>
+  <p class="lead" style="margin:0 0 16px">If we've worked together or you've used my work, I'd love to include your feedback (pending review).</p>
+  <form method="post" enctype="multipart/form-data" class="contact-form" style="margin-top:12px">
+    {% csrf_token %}
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="id_name">Your Name <span class="req">*</span></label>
+        {{ form.name }}
+        {% if form.name.errors %}<div class="field-error">{{ form.name.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="form-field">
+        <label for="id_role">Role / Company</label>
+        {{ form.role }}
+        {% if form.role.errors %}<div class="field-error">{{ form.role.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="form-field">
+        <label for="id_email">Your Email <span class="req">*</span></label>
+        {{ form.email }}
+        {% if form.email.errors %}<div class="field-error">{{ form.email.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="form-field" style="grid-column:1/-1">
+        <label for="id_content">Testimonial <span class="req">*</span></label>
+        {{ form.content }}
+        {% if form.content.errors %}<div class="field-error">{{ form.content.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="form-field">
+        <label for="id_image">Photo (optional)</label>
+        {{ form.image }}
+        {% if form.image.errors %}<div class="field-error">{{ form.image.errors|striptags }}</div>{% endif %}
+      </div>
+      {{ form.hp }}
+    </div>
+    <div class="actions" style="margin-top:10px">
+      <button type="submit" class="btn">Submit Recommendation</button>
+      <a href="/" class="btn secondary">Back to Home</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

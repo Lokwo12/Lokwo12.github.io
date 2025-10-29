@@ -1,0 +1,41 @@
+[
+  {
+    "model": "portfolio.project",
+    "pk": 1,
+    "fields": {
+      "title": "Personal Portfolio Website",
+      "description": "A responsive portfolio built with Django, featuring a blog, contact form, and project showcase.",
+      "technologies": "Django, HTML, CSS, JavaScript",
+      "category": "Web Development",
+      "date": "2025-09-15",
+      "image": "",
+      "url": "https://github.com/Lokwo12/portfolio"
+    }
+  },
+  {
+    "model": "portfolio.project",
+    "pk": 2,
+    "fields": {
+      "title": "E-commerce Platform",
+      "description": "A scalable e-commerce platform with product filtering, cart, and payment integration.",
+      "technologies": "Django, React, Stripe",
+      "category": "E-commerce",
+      "date": "2025-07-10",
+      "image": "",
+      "url": "https://github.com/Lokwo12/ecommerce"
+    }
+  },
+  {
+    "model": "portfolio.project",
+    "pk": 3,
+    "fields": {
+      "title": "Real-time Chat App",
+      "description": "A real-time chat application using Django Channels and WebSockets.",
+      "technologies": "Django, Channels, WebSockets",
+      "category": "Communication",
+      "date": "2025-05-20",
+      "image": "",
+      "url": "https://github.com/Lokwo12/chat-app"
+    }
+  }
+]

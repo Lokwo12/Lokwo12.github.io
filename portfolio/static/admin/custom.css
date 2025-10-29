@@ -1,0 +1,116 @@
+/* Minimal modern skin for Django admin, no third-party deps */
+:root{
+  --accent: #6366f1; /* indigo */
+  --bg: #0b1120;
+  --card: #0f172a;
+  --text: #e6edf3;
+  --muted: #9ba4b3;
+  --border: rgba(148,163,184,0.18);
+}
+
+html[data-theme="dark"] body,
+body.dark{ background: var(--bg) !important; color: var(--text) !important; }
+
+/* Header */
+#header{ background: linear-gradient(90deg, var(--accent), #60a5fa); color:#fff; border-bottom: none; }
+#branding h1, #branding h1 a{ color:#fff !important; text-decoration:none; }
+#user-tools{ color: rgba(255,255,255,0.9); }
+#user-tools a{ color:#fff; opacity:0.95 }
+
+/* Branding with logo */
+#branding h1{ display:flex; align-items:center; gap:10px; }
+#branding h1 img.site-logo{ height:26px; width:auto; vertical-align:middle; }
+#branding h1 img.logo-dark{ display:none; }
+@media (prefers-color-scheme: dark){
+  #branding h1 img.logo-light{ display:none; }
+  #branding h1 img.logo-dark{ display:inline-block; }
+}
+
+/* Modules/cards */
+.module{ background: var(--card); border:1px solid var(--border); border-radius:12px; box-shadow: 0 4px 18px rgba(2,6,23,0.35); }
+.dashboard .module{ padding: 10px 12px; }
+
+/* Tables */
+.change-list table#result_list{ border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+.change-list table#result_list thead th{ background: rgba(255,255,255,0.04); color: var(--text); border-color: var(--border); }
+.change-list table#result_list tbody td{ border-color: var(--border); color: var(--text); }
+tr:nth-child(even){ background: rgba(255,255,255,0.02); }
+
+/* Forms */
+fieldset.module{ background: var(--card); border:1px solid var(--border); border-radius:12px; }
+.inline-group .module{ border-radius:12px; }
+input, select, textarea{ background: transparent; color: var(--text); border:1px solid var(--border); border-radius:8px; }
+
+/* Buttons */
+.button, input[type=submit], .deletelink, .submit-row input{ border-radius:10px; border:1px solid transparent; }
+.button.default, input.default, .submit-row input.default{ background: var(--accent); color:#fff; }
+.button:hover, input[type=submit]:hover{ filter: brightness(1.05); }
+
+/* Breadcrumbs */
+#breadcrumbs{ background: transparent; color: var(--muted); border-bottom: 1px solid var(--border); }
+#breadcrumbs a{ color: #c7d2fe; }
+
+/* Login: center, enlarge, and beautify */
+#container.login{
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  position: relative;
+}
+
+/* Subtle decorative glow */
+#container.login::before{
+  content: "";
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(800px 600px at 15% 10%, rgba(99,102,241,0.18), transparent 60%),
+    radial-gradient(600px 500px at 85% 80%, rgba(96,165,250,0.16), transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+
+#container.login #content{
+  width: min(520px, 92vw);
+  background: var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  box-shadow: 0 20px 60px rgba(2,6,23,0.45);
+  padding: 24px 22px 18px;
+  z-index: 1;
+}
+
+#container.login #content h1{
+  text-align:center;
+  margin: 0 0 12px;
+  color: var(--text);
+}
+
+#container.login .form-row label{ font-weight: 600; color: var(--text); }
+#container.login input{ padding: 12px 12px; font-size: 16px; border-radius: 10px; }
+#container.login .password-reset-link{ text-align:center; margin-top: 8px; }
+
+#container.login .submit-row{ display:flex; justify-content:center; margin-top: 10px; }
+#container.login .submit-row input{
+  padding: 12px 16px; font-size: 16px; border-radius: 10px;
+  background: var(--accent); color: #fff; border: 1px solid transparent;
+  box-shadow: 0 8px 24px rgba(79,70,229,0.35);
+}
+#container.login .submit-row input:hover{ filter: brightness(1.05); }
+
+/* Light theme adjustments */
+@media (prefers-color-scheme: light){
+  #container.login::before{
+    background:
+      radial-gradient(800px 600px at 15% 10%, rgba(99,102,241,0.22), transparent 60%),
+      radial-gradient(600px 500px at 85% 80%, rgba(125,211,252,0.18), transparent 60%);
+  }
+}
+
+/* Make it work for light theme too */
+@media (prefers-color-scheme: light){
+  :root{
+    --bg:#f8fafc; --card:#fff; --text:#0f172a; --muted:#475569; --border: rgba(15,23,42,0.12);
+  }
+  #header{ background: linear-gradient(90deg, var(--accent), #7dd3fc); }
+  tr:nth-child(even){ background: rgba(0,0,0,0.02); }
+}

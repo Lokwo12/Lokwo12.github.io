@@ -1,0 +1,38 @@
+[
+  {
+    "model": "portfolio.testimonial",
+    "pk": 1,
+    "fields": {
+      "name": "Jane Doe",
+      "role": "Product Manager, Acme Corp",
+      "content": "Denis is a fantastic developer! He delivered our project on time and exceeded expectations.",
+      "image": "",
+      "created_at": "2025-10-01",
+      "featured": true
+    }
+  },
+  {
+    "model": "portfolio.testimonial",
+    "pk": 2,
+    "fields": {
+      "name": "John Smith",
+      "role": "CTO, Tech Innovations",
+      "content": "Working with Denis was a pleasure. His technical skills and communication are top-notch.",
+      "image": "",
+      "created_at": "2025-09-15",
+      "featured": true
+    }
+  },
+  {
+    "model": "portfolio.testimonial",
+    "pk": 3,
+    "fields": {
+      "name": "Emily Chen",
+      "role": "Lead Designer, Creatives Studio",
+      "content": "Denis brought our ideas to life with beautiful code and thoughtful UX decisions.",
+      "image": "",
+      "created_at": "2025-08-20",
+      "featured": true
+    }
+  }
+]

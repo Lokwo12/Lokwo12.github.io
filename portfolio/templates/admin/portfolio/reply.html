@@ -1,0 +1,10 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  <h1>Reply to {{ message.name }} &lt;{{ message.email }}&gt;</h1>
+  <form method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="default">Send reply</button>
+    <a href="..">Cancel</a>
+  </form>
+{% endblock %}

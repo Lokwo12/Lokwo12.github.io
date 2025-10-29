@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Subscribe — Updates{% endblock %}
+
+{% block content %}
+<section class="container" style="margin:36px auto;max-width:720px">
+  <h1 style="margin:0 0 10px">Subscribe to updates</h1>
+  <p class="lead" style="margin:0 0 16px">Get occasional updates about new projects and articles. No spam, unsubscribe anytime.</p>
+  <form method="post" class="contact-form" style="margin-top:12px">
+    {% csrf_token %}
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="id_email">Email <span class="req">*</span></label>
+        {{ form.email }}
+        {% if form.email.errors %}<div class="field-error">{{ form.email.errors|striptags }}</div>{% endif %}
+      </div>
+      {{ form.hp }}
+    </div>
+    <div class="actions" style="margin-top:10px">
+      <button type="submit" class="btn">Subscribe</button>
+      <a href="/" class="btn secondary">Back to Home</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

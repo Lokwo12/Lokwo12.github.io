@@ -1,0 +1,386 @@
+{% extends 'base.html' %}
+{% load static site_extras %}
+
+{% block title %}About — Denis Lokwo{% endblock %}
+
+{% block content %}
+
+<section class="container resume">
+  <div class="resume-header">
+    <div class="rh-meta">
+      <h1 class="rh-title">{{ PROFILE.name }}</h1>
+      <p class="rh-sub">{{ PROFILE.title }}</p>
+      {% if PROFILE.location %}<p class="rh-sub">📍 {{ PROFILE.location }}</p>{% endif %}
+      {# Social chips removed from header as requested #}
+      {% if PROFILE.experience_years_total or PROFILE.updated_at %}
+      <div class="badge-list" style="margin:8px 0">
+        {% if PROFILE.experience_years_total %}<span class="chip">{{ PROFILE.experience_years_total }}+ years experience</span>{% endif %}
+        {% if PROFILE.updated_at %}<span class="chip">Last updated: {{ PROFILE.updated_at|date:"M Y" }}</span>{% endif %}
+      </div>
+      {% endif %}
+      <div class="resume-actions">
+        {% if SITE.resume_url %}
+          <a class="btn" href="{{ SITE.resume_url }}" download data-ev="download_resume">Download Resume</a>
+          <a class="btn secondary" href="{% url 'portfolio:about_pdf' %}" data-ev="download_resume_pdf">Generate PDF</a>
+        {% else %}
+          <a class="btn" href="{% url 'portfolio:about_pdf' %}" data-ev="download_resume_pdf">Download Resume (PDF)</a>
+          <a class="btn secondary" href="{% static 'resume/Denis_Lokwo_Resume.pdf' %}" download data-ev="download_resume_static">Static Resume</a>
+        {% endif %}
+  {# LinkedIn button removed from header actions as requested #}
+        <a class="btn secondary" href="{% url 'portfolio:contact' %}">Contact Me</a>
+        <button class="btn secondary" type="button" onclick="window.print()">Print as PDF</button>
+      </div>
+    </div>
+    <div class="rh-avatar">
+      {% if PROFILE.avatar_url %}
+        <img src="{{ PROFILE.avatar_url }}" alt="{{ PROFILE.name }}">
+      {% else %}
+        <img src="{% static 'images/avatar.svg' %}" alt="{{ PROFILE.name }}">
+      {% endif %}
+    </div>
+  </div>
+
+  {% if PROFILE.skills or PROFILE.tools %}
+  <div class="resume-card" style="margin-top:14px">
+    <div class="resume-section-title" style="margin:0 0 8px">Core Skills</div>
+    <div class="badge-list">
+      {% merge_lists PROFILE.skills PROFILE.tools 6 as core_skills %}
+      {% for s in core_skills %}<span class="chip">{% tech_icon s 16 %} {{ s }}</span>{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="resume-grid">
+    <aside class="resume-side">
+      <section class="resume-card">
+        <h3 class="resume-section-title">On this page</h3>
+        <ul class="resume-list">
+          <li><a href="#summary">Professional Summary</a></li>
+          <li><a href="#experience">Experience</a></li>
+          <li><a href="#education">Education</a></li>
+          {% if PROFILE.courses_all %}<li><a href="#courses">Courses Attended</a></li>{% endif %}
+          <li><a href="#certifications">Certifications</a></li>
+          <li><a href="#achievements">Selected Achievements</a></li>
+          <li><a href="#awards">Awards</a></li>
+          {# Social links removed from sidebar TOC as requested #}
+        </ul>
+      </section>
+      {% if PROFILE.email or PROFILE.phone or PROFILE.whatsapp or PROFILE.location %}
+      <section class="resume-card">
+        <h3 class="resume-section-title">Contact</h3>
+        <ul class="resume-list">
+          {% if PROFILE.email %}<li><strong>Email:</strong> <a href="mailto:{{ PROFILE.email }}">{{ PROFILE.email }}</a></li>{% endif %}
+          {% if PROFILE.phone %}<li><strong>Phone:</strong> <a href="tel:{{ PROFILE.phone|cut:' ' }}">{{ PROFILE.phone }}</a></li>{% endif %}
+          {% if PROFILE.whatsapp %}<li><strong>WhatsApp:</strong> <a href="https://wa.me/{{ PROFILE.whatsapp_link }}" target="_blank" rel="noopener">{{ PROFILE.whatsapp }}</a></li>{% endif %}
+          {% if PROFILE.location %}<li><strong>Location:</strong> {{ PROFILE.location }}</li>{% endif %}
+        </ul>
+      </section>
+      {% endif %}
+
+      {% if PROFILE.skills %}
+      <section class="resume-card">
+        <h3 class="resume-section-title">Key Skills</h3>
+        <div class="badge-list">
+          {% for s in PROFILE.skills %}<span class="chip">{% tech_icon s 16 %} {{ s }}</span>{% endfor %}
+        </div>
+      </section>
+      {% endif %}
+
+      {% if PROFILE.tools %}
+      <section class="resume-card">
+        <h3 class="resume-section-title">Tools & Tech</h3>
+        <div class="badge-list">
+          {% for t in PROFILE.tools %}<span class="chip">{% tech_icon t 16 %} {{ t }}</span>{% endfor %}
+        </div>
+      </section>
+      {% endif %}
+
+      {% if PROFILE.languages %}
+      <section class="resume-card">
+        <h3 class="resume-section-title">Languages</h3>
+        <div class="badge-list">
+          {% for l in PROFILE.languages %}<span class="chip">{{ l }}</span>{% endfor %}
+        </div>
+      </section>
+      {% endif %}
+
+      {% if PROFILE.interests %}
+      <section class="resume-card">
+        <h3 class="resume-section-title">Interests</h3>
+        <div class="badge-list">
+          {% for i in PROFILE.interests %}<span class="chip">{{ i }}</span>{% endfor %}
+        </div>
+      </section>
+      {% endif %}
+
+      {# Social Links section removed from sidebar as requested #}
+    </aside>
+
+    <main class="resume-main">
+      {% if PROFILE.intro or PROFILE.summary %}
+      <section class="resume-card" id="summary">
+        <h3 class="resume-section-title">Professional Summary</h3>
+        <p class="lead">{{ PROFILE.intro|default:PROFILE.summary }}</p>
+      </section>
+      {% endif %}
+
+      {% if PROFILE.experience %}
+      <section class="resume-card" id="experience">
+        <h3 class="resume-section-title">Experience</h3>
+        <div class="resume-list">
+          {% for job in PROFILE.experience %}
+          <article class="xp-item">
+            <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
+              {% if job.logo_url %}
+              <img src="{{ job.logo_url }}" alt="{{ job.company }} logo" style="width:36px;height:36px;border-radius:8px;box-shadow:0 1px 6px rgba(2,6,23,0.28)">
+              {% endif %}
+              <div style="flex:1;min-width:240px">
+                <h4 class="xp-role" style="margin-bottom:4px">{{ job.role }}</h4>
+                <p class="xp-meta">
+                  {% if job.company_url %}<a href="{{ job.company_url }}" target="_blank" rel="noopener">{{ job.company }}</a>{% else %}{{ job.company }}{% endif %}
+                  {% if job.company or job.period %} • {% endif %}
+                  {% with sy=job.start_year ey=job.end_year cur=job.is_current %}
+                    {% if sy or ey or cur %}
+                      {% if sy %}{{ sy }}{% endif %} — {% if cur %}Present{% elif ey %}{{ ey }}{% endif %}
+                    {% else %}
+                      {{ job.period }}
+                    {% endif %}
+                  {% endwith %}
+                </p>
+                {% if job.employment_type or job.work_mode or job.location or job.is_current or job.duration_label %}
+                <div class="badge-list" style="margin:6px 0 0">
+                  {% if job.employment_type %}<span class="chip">💼 {{ job.employment_type|title }}</span>{% endif %}
+                  {% if job.work_mode %}
+                    {% if job.work_mode == 'remote' %}
+                      <span class="chip">💻 Remote</span>
+                    {% elif job.work_mode == 'hybrid' %}
+                      <span class="chip">🔁 Hybrid</span>
+                    {% else %}
+                      <span class="chip">🏢 On‑site</span>
+                    {% endif %}
+                  {% endif %}
+                  {% if job.location %}<span class="chip">📍 {{ job.location }}</span>{% endif %}
+                  {% if job.is_current %}<span class="chip">Current</span>{% endif %}
+                  {% if job.duration_label %}<span class="chip">⏱️ {{ job.duration_label }}</span>{% endif %}
+                </div>
+                {% endif %}
+                {% if job.summary %}
+                  {% with lines=job.summary|bullet_lines %}
+                    {% if lines %}
+                      <ul class="xp-bullets" style="margin-top:6px">
+                        {% for line in lines %}<li>{{ line }}</li>{% endfor %}
+                      </ul>
+                    {% else %}
+                      <p class="xp-summary" style="margin-top:6px">{{ job.summary }}</p>
+                    {% endif %}
+                  {% endwith %}
+                {% endif %}
+                {% if job.technologies %}
+                  <div class="badge-list" style="margin-top:6px">
+                    {% for t in job.technologies %}<span class="chip">{% tech_icon t 16 %} {{ t }}</span>{% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+      </section>
+      {% endif %}
+
+      {% if PROFILE.education %}
+      <section class="resume-card" id="education">
+        <h3 class="resume-section-title">Education</h3>
+        <div class="resume-list">
+          {% for ed in PROFILE.education %}
+          <article class="xp-item">
+            <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
+              {% if ed.logo_url %}
+              <img src="{{ ed.logo_url }}" alt="{{ ed.institution }} logo" style="width:36px;height:36px;border-radius:8px;box-shadow:0 1px 6px rgba(2,6,23,0.28)">
+              {% endif %}
+              <div style="flex:1;min-width:240px">
+                <h4 class="xp-role" style="margin-bottom:4px">{{ ed.degree }}{% if ed.field_of_study %} — {{ ed.field_of_study }}{% endif %}</h4>
+                <p class="xp-meta">
+                  {% if ed.institution_url %}<a href="{{ ed.institution_url }}" target="_blank" rel="noopener">{{ ed.institution }}</a>{% else %}{{ ed.institution }}{% endif %}
+                  {% if ed.institution or ed.period %} • {% endif %}{{ ed.period }}
+                  {% if ed.location %} • {{ ed.location }}{% endif %}
+                </p>
+                {% if ed.study_mode or ed.duration_years or ed.gpa or ed.honors %}
+                <div class="badge-list" style="margin:6px 0 0">
+                  {% if ed.study_mode %}
+                    {% if ed.study_mode == 'online' %}<span class="chip">🌐 Online</span>
+                    {% elif ed.study_mode == 'hybrid' %}<span class="chip">🔁 Hybrid</span>
+                    {% else %}<span class="chip">🏫 On‑campus</span>{% endif %}
+                  {% endif %}
+                  {% if ed.duration_years %}<span class="chip">⏱️ {{ ed.duration_years }} yr{% if ed.duration_years|add:0 != 1 %}s{% endif %}</span>{% endif %}
+                  {% if ed.gpa %}<span class="chip">GPA: {{ ed.gpa }}</span>{% endif %}
+                  {% if ed.honors %}<span class="chip">Honors: {{ ed.honors }}</span>{% endif %}
+                </div>
+                {% endif %}
+                {% if ed.summary %}<p class="xp-summary" style="margin-top:6px">{{ ed.summary }}</p>{% endif %}
+                {% if ed.courses %}
+                <div style="margin-top:8px">
+                  <strong style="font-size:0.95rem;color:var(--muted)">Key Courses:</strong>
+                  <div class="badge-list" style="margin-top:6px">
+                    {% for c in ed.courses %}<span class="chip">{{ c }}</span>{% endfor %}
+                  </div>
+                </div>
+                {% endif %}
+                {% if ed.technologies %}
+                <div style="margin-top:8px">
+                  <strong style="font-size:0.95rem;color:var(--muted)">Technologies Covered:</strong>
+                  <div class="badge-list" style="margin-top:6px">
+                    {% for t in ed.technologies %}<span class="chip">{% tech_icon t 16 %} {{ t }}</span>{% endfor %}
+                  </div>
+                </div>
+                {% endif %}
+                {% if ed.thesis_title %}
+                  <p class="xp-summary" style="margin-top:6px"><strong>Thesis:</strong> {{ ed.thesis_title }}</p>
+                {% endif %}
+                {% if ed.activities %}
+                  <ul class="xp-bullets" style="margin-top:6px">
+                    {% for a in ed.activities %}<li>{{ a }}</li>{% endfor %}
+                  </ul>
+                {% endif %}
+              </div>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+      </section>
+      {% endif %}
+
+      {% if PROFILE.courses_all %}
+      <section class="resume-card" id="courses">
+        <h3 class="resume-section-title">Courses Attended</h3>
+        <div class="badge-list">
+          {% for c in PROFILE.courses_all %}<span class="chip">{{ c }}</span>{% endfor %}
+        </div>
+      </section>
+      {% endif %}
+
+      {% if PROFILE.certifications_full or PROFILE.certifications %}
+      <section class="resume-card" id="certifications">
+        <h3 class="resume-section-title">Certifications</h3>
+        {% if PROFILE.certifications_full %}
+        <div class="resume-list">
+          {% for c in PROFILE.certifications_full %}
+          <article>
+            <h4 class="xp-role">{{ c.name }}</h4>
+            <p class="xp-meta">
+              {% if c.issuer %}{{ c.issuer }}{% endif %}
+              {% if c.issuer and c.year %} • {% endif %}
+              {% if c.year %}{{ c.year }}{% endif %}
+            </p>
+          </article>
+          {% endfor %}
+        </div>
+        {% else %}
+        <ul class="resume-list">
+          {% for c in PROFILE.certifications %}<li>{{ c }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+      </section>
+      {% endif %}
+
+      {% if PROFILE.achievements %}
+      <section class="resume-card" id="achievements">
+        <h3 class="resume-section-title">Selected Achievements</h3>
+        <ul class="resume-list">
+          {% for a in PROFILE.achievements %}<li>{{ a }}</li>{% endfor %}
+        </ul>
+      </section>
+      {% endif %}
+
+      {% if PROFILE.awards_full or PROFILE.awards %}
+      <section class="resume-card" id="awards">
+        <h3 class="resume-section-title">Awards</h3>
+        {% if PROFILE.awards_full %}
+        <div class="resume-list">
+          {% for a in PROFILE.awards_full %}
+          <article>
+            <h4 class="xp-role">{{ a.name }}</h4>
+            <p class="xp-meta">
+              {% if a.issuer %}{{ a.issuer }}{% endif %}
+              {% if a.issuer and a.year %} • {% endif %}
+              {% if a.year %}{{ a.year }}{% endif %}
+            </p>
+          </article>
+          {% endfor %}
+        </div>
+        {% else %}
+        <ul class="resume-list">
+          {% for a in PROFILE.awards %}<li>{{ a }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+      </section>
+      {% endif %}
+    </main>
+  </div>
+  <div class="container print-only" style="margin-top:10pt; font-size:10pt; color:#555;">
+    <hr style="border:none;border-top:1px solid #ddd; margin:8pt 0">
+    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
+      <span>{{ PROFILE.name }} — {{ PROFILE.title }}</span>
+      <span>
+        {% if PROFILE.email %}Email: {{ PROFILE.email }}{% endif %}
+        {% if PROFILE.phone %}{% if PROFILE.email %} • {% endif %}Phone: {{ PROFILE.phone }}{% endif %}
+        {% if SITE.brand_name %}{% if PROFILE.email or PROFILE.phone %} • {% endif %}Site: {{ request.build_absolute_uri|cut:request.get_full_path }}{% endif %}
+      </span>
+    </div>
+    <div style="margin-top:4pt">Generated on {% now "F j, Y" %}</div>
+  </div>
+  <div class="print-footer">
+    <div class="container" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <span>Page <span class="page-number"></span> of <span class="total-pages"></span></span>
+      <span>{{ request.build_absolute_uri|cut:request.get_full_path }}</span>
+    </div>
+  </div>
+</section>
+<section class="container" style="margin:24px auto;max-width:900px">
+  <div class="resume-card">
+    <h3 class="resume-section-title" style="margin-bottom:8px">Share your experience</h3>
+    <p class="lead" style="margin:0 0 12px">Have we worked together? I’d love to include your feedback. Your testimonial will be reviewed before it appears.</p>
+    <form method="post" action="{% url 'portfolio:recommend' %}" enctype="multipart/form-data" class="contact-form" style="margin-top:8px">
+      {% csrf_token %}
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="id_name_inline">Your Name <span class="req">*</span></label>
+          <input type="text" id="id_name_inline" name="name" required placeholder="Your name" />
+        </div>
+        <div class="form-field">
+          <label for="id_role_inline">Role / Company</label>
+          <input type="text" id="id_role_inline" name="role" placeholder="e.g. CTO, Company" />
+        </div>
+        <div class="form-field">
+          <label for="id_email_inline">Your Email <span class="req">*</span></label>
+          <input type="email" id="id_email_inline" name="email" required placeholder="you@company.com" />
+        </div>
+        <div class="form-field" style="grid-column:1/-1">
+          <label for="id_content_inline">Testimonial <span class="req">*</span></label>
+          <textarea id="id_content_inline" name="content" rows="5" required placeholder="Share your experience working with me"></textarea>
+        </div>
+        <div class="form-field">
+          <label for="id_image_inline">Photo (optional)</label>
+          <input type="file" id="id_image_inline" name="image" accept="image/*" />
+        </div>
+      </div>
+      <input type="hidden" name="hp" value="">
+      <input type="hidden" name="next" value="{{ request.get_full_path }}">
+      <div class="actions" style="margin-top:10px">
+        <button type="submit" class="btn">Submit Recommendation</button>
+        <a href="{% url 'portfolio:recommend' %}" class="btn secondary">Open full form</a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}
+{% block extra_css %}
+{{ block.super }}
+<style>
+/* Shown only when printing or generating PDF */
+@media print {
+  .print-only { display: block !important; }
+}
+.print-only { display: none; }
+</style>
+{% endblock %}

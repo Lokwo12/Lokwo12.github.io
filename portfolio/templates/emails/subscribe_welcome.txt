@@ -1,0 +1,6 @@
+Thanks for confirming your subscription!
+
+You're now subscribed to {{ site_name }} updates.
+
+You can unsubscribe anytime:
+{{ unsubscribe_url }}

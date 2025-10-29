@@ -1,0 +1,41 @@
+[
+  {
+    "model": "blog.post",
+    "pk": 1,
+    "fields": {
+      "title": "Welcome to My Blog!",
+      "slug": "welcome-to-my-blog",
+      "author": "Denis Lokwo",
+      "content": "This is the first post on my new portfolio blog. Here, I'll share updates, tutorials, and insights from my journey as a full-stack developer.",
+      "created_at": "2025-10-23T01:00:00Z",
+      "updated_at": "2025-10-23T01:00:00Z",
+      "published": true
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 2,
+    "fields": {
+      "title": "How I Built My Portfolio with Django",
+      "slug": "how-i-built-my-portfolio-with-django",
+      "author": "Denis Lokwo",
+      "content": "In this post, I walk through the process of building my portfolio site using Django, including tips for structuring apps, styling, and deploying.",
+      "created_at": "2025-10-22T15:30:00Z",
+      "updated_at": "2025-10-22T15:30:00Z",
+      "published": true
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 3,
+    "fields": {
+      "title": "Top 5 Tools for Modern Web Development",
+      "slug": "top-5-tools-for-modern-web-development",
+      "author": "Denis Lokwo",
+      "content": "Discover my favorite tools and libraries for building fast, accessible, and maintainable web applications in 2025.",
+      "created_at": "2025-10-21T10:00:00Z",
+      "updated_at": "2025-10-21T10:00:00Z",
+      "published": true
+    }
+  }
+]

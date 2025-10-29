@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+  <body style="font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; line-height:1.5; color:#111;background:#f6f6f6">
+    <div style="max-width:560px;margin:0 auto;padding:0 12px">
+      <div style="background:#fff;padding:16px;border-radius:10px;margin:16px 0">
+        <div style="display:flex;align-items:center;gap:10px;margin:0 0 8px">
+          {% if logo_url %}
+            <img src="{{ logo_url }}" alt="{{ brand_name|default:site_name }}" style="height:28px;width:auto;vertical-align:middle" />
+          {% endif %}
+          <span style="font-weight:700;font-size:14px;color:#111">{{ brand_name|default:site_name }}</span>
+        </div>
+        <h2 style="margin:8px 0 12px">Welcome aboard!</h2>
+        <p style="margin:0 0 12px">Thanks for confirming your subscription. You're now subscribed to <strong>{{ brand_name|default:site_name }}</strong> updates.</p>
+  <p style="margin:12px 0 0;color:#555">You can unsubscribe anytime: <a href="{{ unsubscribe_url }}" style="color:{{ primary_color|default:'#111' }};text-decoration:none">unsubscribe</a></p>
+      </div>
+    </div>
+  </body>
+</html>

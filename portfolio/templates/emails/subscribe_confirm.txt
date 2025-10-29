@@ -1,0 +1,6 @@
+Hi,
+
+Please confirm your subscription to {{ site_name }} by clicking the link below:
+{{ confirm_url }}
+
+If you didn't request this, you can ignore this email.

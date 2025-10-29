@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static site_extras %}
+{% block title %}Gallery — Denis Lokwo{% endblock %}
+{% block og_title %}Gallery — Denis Lokwo{% endblock %}
+{% block tw_title %}Gallery — Denis Lokwo{% endblock %}
+{% block head_meta %}
+    <meta property="og:description" content="A curated gallery of project screenshots and blog thumbnails.">
+    <meta name="twitter:description" content="A curated gallery of project screenshots and blog thumbnails.">
+    <meta property="og:image" content="{% absolute_static 'images/og-default.svg' %}">
+    <meta name="twitter:image" content="{% absolute_static 'images/og-default.svg' %}">
+{% endblock %}
+{% block content %}
+<section class="container" style="margin-top:48px;">
+    <header class="contact-hero" style="margin-bottom:16px;">
+        <span class="eyebrow">Visuals</span>
+        <h2 class="title" style="margin:4px 0 8px">Gallery</h2>
+        <p class="lead">A quick visual overview from projects and posts.</p>
+    </header>
+
+    <div class="filter-chips" role="tablist" aria-label="Source filter">
+        <a class="chip {% if src == 'all' %}selected{% endif %}" href="?src=all">All</a>
+        <a class="chip {% if src == 'projects' %}selected{% endif %}" href="?src=projects">Projects</a>
+        <a class="chip {% if src == 'blog' %}selected{% endif %}" href="?src=blog">Blog</a>
+        <a class="chip {% if src == 'custom' %}selected{% endif %}" href="?src=custom">Custom</a>
+    </div>
+
+    <div class="gallery-grid" style="margin-top:14px">
+        {% for it in items %}
+        <article class="gallery-item">
+            <a href="{{ it.img }}" data-link="{{ it.url }}" data-desc="{{ it.desc|default:'' }}" aria-label="Open {{ it.title }}" title="{{ it.title }}{% if it.desc %} — {{ it.desc|striptags|truncatewords:20 }}{% endif %}">
+                <img src="{{ it.img }}" alt="{{ it.alt|default:it.title }}" loading="lazy" decoding="async" fetchpriority="low" width="{{ it.width }}" height="{{ it.height }}" sizes="(max-width: 640px) 100vw, (max-width: 900px) 50vw, (max-width: 1200px) 33vw, 25vw">
+                <span class="g-badge">{{ it.source }}</span>
+            </a>
+            {% if it.desc %}
+            <div class="g-caption">{{ it.desc|striptags }}</div>
+            {% endif %}
+        </article>
+        {% empty %}
+        <p>No images available.</p>
+        {% endfor %}
+    </div>
+
+    {% if page_obj %}
+    <nav class="pagination" aria-label="Pagination" style="margin-top:12px">
+        {% if page_obj.has_previous %}
+            <a class="page-link" href="?src={{ src }}&page={{ page_obj.previous_page_number }}">Previous</a>
+        {% else %}
+            <span class="page-link disabled">Previous</span>
+        {% endif %}
+        <span class="page-status">Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a class="page-link" href="?src={{ src }}&page={{ page_obj.next_page_number }}">Next</a>
+        {% else %}
+            <span class="page-link disabled">Next</span>
+        {% endif %}
+    </nav>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/lightbox.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static site_extras %}
+{% block title %}Contact — Denis Lokwo{% endblock %}
+{% block content %}
+<section class="container" style="margin:48px auto;">
+    <header class="contact-hero fade-up">
+        <span class="eyebrow">Get in touch</span>
+        <h1 class="title" style="margin-bottom:8px;">{{ SITE.contact_title|default:"Let's build something great" }}</h1>
+        <p class="lead">{{ SITE.contact_subtitle|default:"Have a question, idea, or project? Send a message and I'll reply within 24–48 hours." }}</p>
+    </header>
+
+    <div class="contact-layout">
+        <aside class="contact-card info-card">
+            <div class="contact-profile">
+                {% if PROFILE.avatar_url %}
+                <img class="contact-avatar" src="{{ PROFILE.avatar_url }}" alt="{{ PROFILE.name }}" />
+                {% else %}
+                <img class="contact-avatar" src="{% static 'images/avatar.svg' %}" alt="{{ PROFILE.name }}" />
+                {% endif %}
+                <div>
+                    <h3 class="contact-name">{{ PROFILE.name }}</h3>
+                    <p class="contact-role">{{ PROFILE.title|default:'Full-stack Developer' }}</p>
+                </div>
+            </div>
+            <ul class="contact-list">
+                <li>
+                    <span class="icon" aria-hidden="true">✉️</span>
+                    <a href="mailto:{{ SITE.email|default:PROFILE.email }}">{{ SITE.email|default:PROFILE.email }}</a>
+                </li>
+                <li>
+                    <span class="icon" aria-hidden="true">📞</span>
+                    <a href="tel:{{ SITE.phone|default:PROFILE.phone }}">{{ SITE.phone|default:PROFILE.phone }}</a>
+                </li>
+                <li>
+                    <span class="icon" aria-hidden="true">💬</span>
+                    {% if PROFILE.whatsapp_link %}
+                    <a href="https://wa.me/{{ PROFILE.whatsapp_link }}?text={{ 'Hello, I would like to discuss a project.'|urlencode }}" target="_blank" rel="noopener">WhatsApp</a>
+                    {% endif %}
+                </li>
+                <li>
+                    <span class="icon" aria-hidden="true">📍</span>
+                    {{ SITE.location|default:PROFILE.location|default:'-' }}
+                </li>
+            </ul>
+            <div class="contact-actions">
+                {% if SITE.resume_url %}
+                <a class="btn secondary" href="{{ SITE.resume_url }}" download>Download CV</a>
+                {% else %}
+                <a class="btn secondary" href="{% static 'resume/Denis_Lokwo_Resume.pdf' %}" download>Download CV</a>
+                {% endif %}
+                {% with gh_fallback=PROFILE.links|get:'github' %}
+                {% if SITE.github_url or gh_fallback %}
+                <a class="btn" href="{{ SITE.github_url|default:gh_fallback }}" target="_blank" rel="noopener">GitHub</a>
+                {% endif %}
+                {% endwith %}
+            </div>
+        </aside>
+
+        <section class="contact-card">
+            {% if messages %}
+                <div class="form-messages" aria-live="polite">
+                    {% for message in messages %}
+                        <div class="message {{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+                        <form method="post" class="contact-form" novalidate enctype="multipart/form-data" aria-label="Contact form">
+                {% csrf_token %}
+                <div class="form-grid">
+                    {% for field in form.visible_fields %}
+                        <div class="form-field{% if field.errors %} has-error{% endif %}">
+                            <label for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                                {% if field.field.required %}<span class="req" aria-hidden="true">*</span>{% endif %}
+                            </label>
+                            {{ field }}
+                            {% if field.help_text %}<small class="help">{{ field.help_text }}</small>{% endif %}
+                            {% if field.errors %}
+                                <div class="field-error">{{ field.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                                <div class="actions">
+                                        <button type="submit" class="btn">Send Message</button>
+                                        <a class="btn secondary" href="mailto:{{ SITE.email|default:PROFILE.email }}">Email directly</a>
+                                </div>
+            </form>
+        </section>
+    </div>
+</section>
+{% if SITE.calendly_url %}
+<section class="container" style="margin:24px auto;">
+    <div class="contact-card" aria-label="Booking widget">
+        <h3 style="margin-top:0;margin-bottom:10px">Book a call</h3>
+        <div class="booking-wrapper">
+            <div class="calendly-inline-widget booking-embed" data-url="{{ SITE.calendly_url }}"></div>
+            <div class="embed-skeleton" aria-hidden="true">Loading scheduler…</div>
+        </div>
+        <p class="help" style="margin-top:8px">If the embed doesn’t load, open <a href="{{ SITE.calendly_url }}" target="_blank" rel="noopener">Calendly</a> in a new tab.</p>
+    </div>
+</section>
+{% else %}
+<section class="container" style="margin:24px auto;">
+    <div class="contact-card" aria-label="Booking widget (not configured)">
+        <h3 style="margin-top:0;margin-bottom:10px">Book a call</h3>
+        <p class="help">Booking is not configured yet. Set CALENDLY_URL in your environment to enable the inline scheduler. You can still visit <a href="https://calendly.com/" target="_blank" rel="noopener">Calendly</a>.</p>
+    </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/contact.js' %}"></script>
+{% if SITE.calendly_url %}
+<script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+{% endif %}
+{% endblock %}

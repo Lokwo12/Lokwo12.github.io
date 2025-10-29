@@ -1,0 +1,135 @@
+:root{
+  --admin-accent:#6366f1; /* match site accent */
+  --admin-bg:#0b1120;
+  --admin-card:#0f172a;
+  --admin-text:#e6edf3;
+  --admin-muted:#9ba4b3;
+  --admin-border:rgba(148,163,184,0.22);
+}
+html[data-theme="light"]:root{
+  --admin-bg:#f8fafc;
+  --admin-card:#ffffff;
+  --admin-text:#0f172a;
+  --admin-muted:#475569;
+  --admin-border:rgba(15,23,42,0.12);
+}
+
+/*******************
+ Elegant admin tweaks
+*******************/
+:root{ font-synthesis-weight:none; }
+body, input, select, textarea, button {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif !important;
+}
+#header{
+  background: linear-gradient(90deg, var(--admin-accent), #60a5fa);
+  border-bottom: none;
+}
+#header a:link, #header a:visited{
+  color:#fff;
+}
+#branding h1, #branding h1 a{
+  color:#fff !important;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.25);
+}
+#user-tools{ color:#f0f3f9; }
+#user-tools a{ color:#fff; text-decoration: underline; }
+
+#content, .module, .dashboard .module{
+  background: var(--admin-card);
+  color: var(--admin-text);
+}
+.module caption, .inline-group h2, .module h2{
+  background: transparent;
+  color: var(--admin-text);
+  border-bottom: 1px solid var(--admin-border);
+}
+.module, .inline-group{
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+}
+.app-index .module{
+  box-shadow: 0 8px 24px rgba(2,6,23,0.24);
+}
+
+/* Condensed tables to fit more on screen */
+table, .change-list table{ font-size: 13px; }
+.change-list table th, .change-list table td{ padding: 6px 8px; }
+.change-list .paginator{ margin: 6px 0; }
+/* Sticky headers for long lists */
+.change-list table thead th{ position: sticky; top: 0; z-index: 3; background: var(--admin-card); box-shadow: 0 2px 8px rgba(2,6,23,0.24); }
+/* Truncate overflowing cell text to keep within screen */
+.change-list table td{ white-space: normal; overflow: visible; text-overflow: initial; max-width: none; word-wrap: break-word; }
+/* Ensure table container scrolls horizontally if needed */
+#changelist-form .results{ overflow-x: auto; }
+
+/* Make content area wider and breathing */
+#content{ padding: 16px 18px; }
+#container{ max-width: 1400px; margin: 0 auto; }
+
+/* Sticky action bar for forms */
+.submit-row{
+  position: sticky; bottom: 0; z-index: 5;
+  background: var(--admin-card);
+  border-top: 1px solid var(--admin-border);
+  box-shadow: 0 -6px 20px rgba(2,6,23,0.28);
+}
+
+/* Inputs and selects modern look */
+input, select, textarea{
+  background: transparent; color: var(--admin-text);
+  border: 1px solid var(--admin-border); border-radius: 8px;
+}
+input:focus, select:focus, textarea:focus{
+  outline: 3px solid rgba(99,102,241,0.28);
+}
+
+/* Buttons */
+.button, input[type=submit], .submit-row input{
+  background: var(--admin-accent); border: 1px solid transparent; color:#fff; border-radius: 8px;
+  padding: 8px 12px; font-weight: 600;
+}
+.button.default, .submit-row input.default{ background: var(--admin-accent); }
+.button:hover, input[type=submit]:hover{ filter: brightness(1.05); }
+
+/* Inlines: tighter spacing */
+.inline-group .inline-related{ padding: 10px 12px; }
+.inline-group .inline-related + .inline-related{ margin-top: 10px; }
+
+/* Filters and search bar tweaks */
+#changelist #toolbar{ padding: 10px; }
+#changelist-filter{ border-radius: 12px; }
+
+/* Sticky toolbar: stays visible under header */
+#changelist #toolbar{
+  position: sticky;
+  top: 48px; /* below header */
+  z-index: 4;
+  background: var(--admin-card);
+  border-bottom: 1px solid var(--admin-border);
+  box-shadow: 0 4px 14px rgba(2,6,23,0.18);
+}
+
+/* Filter toggle and collapsed state */
+body.admin-filters-collapsed #changelist-filter{ display: none; }
+/* When collapsed, let results take the full width */
+body.admin-filters-collapsed #changelist .results{ margin-right: 0; }
+
+/* Toolbar controls layout improvements */
+#changelist #toolbar form .search-container{ display: inline-flex; align-items: center; gap: 8px; }
+#changelist #toolbar .filter-toggle{ margin-left: 8px; }
+
+/* Compact actions row */
+#changelist .actions{ display:flex; align-items:center; gap:8px; flex-wrap:wrap }
+#changelist .actions select{ max-width: 220px; }
+
+/* Login page */
+.login #container { max-width: 420px; }
+.login .submit-row { position: static; box-shadow: none; }
+
+/* Respect the default light theme styles while improving contrast */
+:root:not([data-theme="light"]) .module, :root:not([data-theme="light"]) .inline-group{ background: var(--admin-card); }
+
+/* Theme toggle button subtle variant */
+#theme-toggle-admin{ background: transparent; border-color: rgba(255,255,255,0.6); }
+#header #theme-toggle-admin{ float: right; margin-top: 6px; }

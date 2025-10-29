@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Testimonials — Denis Lokwo{% endblock %}
+
+{% block content %}
+<section class="container" style="padding:30px 0 10px">
+  <h1 style="margin:0 0 12px">Testimonials</h1>
+  <p class="muted" style="margin:0 0 14px">What clients and collaborators say.</p>
+  <div style="margin:0 0 20px">
+    <a class="btn" href="{% url 'portfolio:recommend' %}?next={% url 'portfolio:testimonials' %}">Leave a Testimonial</a>
+  </div>
+
+  {% if testimonials %}
+  <div class="cards-grid testimonials-grid">
+    {% for t in testimonials %}
+    <article class="profile-card testimonial-card">
+      {% if t.image %}<img class="contact-avatar" src="{{ t.image.url }}" alt="{{ t.name }} avatar" loading="lazy">{% endif %}
+      <p class="lead">“{{ t.content }}”</p>
+      <p class="meta">— {{ t.name }}{% if t.role %}, {{ t.role }}{% endif %}</p>
+    </article>
+    {% endfor %}
+  </div>
+
+  {% if page_obj and paginator.num_pages > 1 %}
+  <nav class="pagination" aria-label="Testimonials pagination" style="margin-top:16px;display:flex;gap:8px">
+    {% if page_obj.has_previous %}
+      <a class="btn secondary" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% else %}
+      <span class="btn secondary" aria-disabled="true">Previous</span>
+    {% endif %}
+    <span class="muted" style="align-self:center">Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+      <a class="btn secondary" href="?page={{ page_obj.next_page_number }}">Next</a>
+    {% else %}
+      <span class="btn secondary" aria-disabled="true">Next</span>
+    {% endif %}
+  </nav>
+  {% endif %}
+
+  {% else %}
+    <p class="muted">No testimonials yet.</p>
+    <div style="margin-top:12px">
+      <a class="btn" href="{% url 'portfolio:recommend' %}?next={% url 'portfolio:testimonials' %}">Be the first to leave one</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

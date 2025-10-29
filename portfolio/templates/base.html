@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{% block title %}Portfolio{% endblock %}</title>
+	{% load static site_extras %}
+	{# Basic SEO #}
+	<meta name="description" content="Full‑stack developer — Django, React, and TypeScript. Building fast, accessible, and elegant web apps.">
+	<link rel="canonical" href="{{ request.build_absolute_uri|default:'' }}">
+	{# Open Graph / Twitter #}
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="{% block og_title %}Portfolio{% endblock %}">
+	<meta property="og:description" content="Full‑stack developer — Django, React, and TypeScript.">
+	<meta property="og:url" content="{{ request.build_absolute_uri|default:'' }}">
+	<meta property="og:image" content="{% if SITE.og_image_url %}{% absolute_url SITE.og_image_url %}{% else %}{% absolute_static 'images/og-default.svg' %}{% endif %}">
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:title" content="{% block tw_title %}Portfolio{% endblock %}">
+	<meta name="twitter:description" content="Full‑stack developer — Django, React, and TypeScript.">
+	<meta name="twitter:image" content="{% if SITE.og_image_url %}{% absolute_url SITE.og_image_url %}{% else %}{% absolute_static 'images/og-default.svg' %}{% endif %}">
+	<link rel="icon" href="{% if SITE.favicon_url %}{{ SITE.favicon_url }}{% else %}{% static 'images/avatar.svg' %}{% endif %}" type="image/svg+xml">
+	<link rel="apple-touch-icon" href="{% if SITE.favicon_url %}{{ SITE.favicon_url }}{% else %}{% static 'images/avatar.svg' %}{% endif %}">
+	<link rel="alternate" type="application/rss+xml" title="Blog RSS" href="{% url 'blog:post_feed' %}">
+	<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+	{% block extra_css %}{% endblock %}
+	<link rel="manifest" href="{% static 'site.webmanifest' %}">
+	{% block head_meta %}{% endblock %}
+
+			{# Analytics loaded dynamically after consent; see footer script #}
+
+		<meta name="theme-color" content="#0f172a">
+
+	{# JSON-LD Person structured data #}
+	<script type="application/ld+json">
+{
+	"@context": "https://schema.org",
+	"@type": "Person",
+	"name": "{{ PROFILE.name|escapejs }}",
+	"jobTitle": "Full‑stack Developer",
+	"url": "{{ request.build_absolute_uri|default:'' }}",
+	"email": "{% if PROFILE.email %}mailto:{{ PROFILE.email }}{% endif %}",
+	"telephone": "{{ PROFILE.phone|default:'' }}",
+	"address": {
+		"@type": "PostalAddress",
+		"addressLocality": "L’Aquila",
+		"addressRegion": "Abruzzi",
+		"addressCountry": "IT"
+	},
+	"sameAs": [
+		{% with linkedin=PROFILE.links|get:'linkedin' github=PROFILE.links|get:'github' %}
+		{% if linkedin %}"{{ linkedin }}"{% if github or SITE.twitter_url or SITE.youtube_url %},{% endif %}{% endif %}
+		{% if github %}"{{ github }}"{% if SITE.twitter_url or SITE.youtube_url %},{% endif %}{% endif %}
+		{% if SITE.twitter_url %}"{{ SITE.twitter_url }}"{% if SITE.youtube_url %},{% endif %}{% endif %}
+		{% if SITE.youtube_url %}"{{ SITE.youtube_url }}"{% endif %}
+		{% endwith %}
+	]
+}
+	</script>
+</head>
+<body>
+	<div id="scroll-progress" class="scroll-progress" aria-hidden="true"></div>
+		<a class="sr-only" href="#main-content">Skip to content</a>
+		<header class="site-header" role="banner">
+		<div class="container header-inner">
+				<a class="brand" href="/">
+					{% if SITE.logo_light_url or SITE.logo_dark_url %}
+						{# Render both variants and toggle via CSS depending on theme #}
+						{% if SITE.logo_dark_url %}
+							<img src="{{ SITE.logo_dark_url }}" alt="" class="brand-logo brand-logo-dark" aria-hidden="true">
+						{% endif %}
+						{% if SITE.logo_light_url %}
+							<img src="{{ SITE.logo_light_url }}" alt="" class="brand-logo brand-logo-light" aria-hidden="true">
+						{% endif %}
+					{% elif SITE.logo_url %}
+						<img src="{{ SITE.logo_url }}" alt="" class="brand-logo" aria-hidden="true">
+					{% else %}
+						<img src="{% static 'images/avatar.svg' %}" alt="" class="brand-logo" aria-hidden="true">
+					{% endif %}
+					<span>{{ SITE.brand_name|default:PROFILE.name }}</span>
+				</a>
+				<nav class="site-nav" role="navigation" aria-label="Primary navigation">
+					<a href="/" class="{% if request.path == '/' %}active{% endif %}" {% if request.path == '/' %}aria-current="page"{% endif %}>Home</a>
+					<a href="/about/" class="{% if request.path|slice:':7' == '/about/' %}active{% endif %}" {% if request.path|slice:':7' == '/about/' %}aria-current="page"{% endif %}>About</a>
+					<a href="/gallery/" class="{% if request.path|slice:':9' == '/gallery/' %}active{% endif %}" {% if request.path|slice:':9' == '/gallery/' %}aria-current="page"{% endif %}>Gallery</a>
+					<a href="/projects/" class="{% if request.path|slice:':10' == '/projects/' %}active{% endif %}" {% if request.path|slice:':10' == '/projects/' %}aria-current="page"{% endif %}>Projects</a>
+					<a href="/blog/" class="{% if request.path|slice:':6' == '/blog/' %}active{% endif %}" {% if request.path|slice:':6' == '/blog/' %}aria-current="page"{% endif %}>Blog</a>
+					<a href="/contact/" class="{% if request.path|slice:':9' == '/contact/' %}active{% endif %}" {% if request.path|slice:':9' == '/contact/' %}aria-current="page"{% endif %}>Contact</a>
+				</nav>
+				<div style="display:flex;align-items:center;gap:10px;">
+					<button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false" title="Toggle theme">
+						<span class="sun" aria-hidden="true">☀️</span>
+						<span class="moon" aria-hidden="true">🌙</span>
+					</button>
+					<button class="nav-toggle" aria-expanded="false" aria-label="Toggle navigation">☰</button>
+				</div>
+		</div>
+	</header>
+
+	<main>
+			{# Flash messages #}
+			{% if messages %}
+			<div class="container" role="status" aria-live="polite" style="margin-top:12px">
+				<ul class="flash-messages" style="list-style:none;padding:0;margin:0;display:grid;gap:10px">
+					{% for message in messages %}
+					<li class="flash {{ message.tags }}" style="padding:10px 14px;border-radius:8px;background:var(--surface-2,#0b12224d);color:var(--text,#e2e8f0);border:1px solid var(--border,#1e293b)">
+						{{ message }}
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+			{% endif %}
+			<div id="main-content">{% block content %}{% endblock %}</div>
+	</main>
+
+	<footer class="site-footer">
+		<div class="container footer-grid">
+			<div class="footer-col">
+				<h4 class="footer-title">Contact Me</h4>
+				<ul class="footer-list">
+					<li><strong>Name:</strong> {{ PROFILE.name }}</li>
+					{% if PROFILE.phone %}<li><strong>Phone:</strong> <a href="tel:{{ PROFILE.phone }}">{{ PROFILE.phone }}</a></li>{% endif %}
+					{% if PROFILE.whatsapp_link %}<li><strong>WhatsApp:</strong> <a href="https://wa.me/{{ PROFILE.whatsapp_link }}" target="_blank" rel="noopener">{{ PROFILE.whatsapp }}</a></li>{% endif %}
+					{% if PROFILE.email %}<li><strong>Email:</strong> <a href="mailto:{{ PROFILE.email }}">{{ PROFILE.email }}</a></li>{% endif %}
+					{% if PROFILE.location %}<li><strong>Location:</strong> {{ PROFILE.location }}</li>{% endif %}
+				</ul>
+			</div>
+			<div class="footer-col">
+				<h4 class="footer-title">Quick Links</h4>
+				<ul class="footer-list">
+					<li><a href="/about/">About Me</a></li>
+					<li><a href="/sitemap/">HTML Sitemap</a></li>
+					<li><a href="/gallery/">Gallery</a></li>
+					<li><a href="/projects/">Projects</a></li>
+					<li><a href="/blog/">Blog</a></li>
+					<li><a href="/contact/">Contact</a></li>
+					<li><a href="/recommend/">Leave a Testimonial</a></li>
+					<li><a href="{% url 'portfolio:portfolio_pdf' %}">Download Portfolio PDF</a></li>
+				</ul>
+			</div>
+			<div class="footer-col">
+				<h4 class="footer-title">Important Links</h4>
+				<ul class="footer-list">
+					{% with gh_fallback=PROFILE.links|get:'github' li_fallback=PROFILE.links|get:'linkedin' %}
+					{% with github=SITE.github_url|default:gh_fallback linkedin=SITE.linkedin_url|default:li_fallback %}
+						{% if linkedin %}<li><a href="{{ linkedin }}" target="_blank" rel="noopener">LinkedIn</a></li>{% endif %}
+						{% if github %}<li><a href="{{ github }}" target="_blank" rel="noopener">GitHub</a></li>{% endif %}
+					{% endwith %}
+					{% endwith %}
+					{% if SITE.twitter_url %}<li><a href="{{ SITE.twitter_url }}" target="_blank" rel="noopener">Twitter</a></li>{% endif %}
+					{% if SITE.youtube_url %}<li><a href="{{ SITE.youtube_url }}" target="_blank" rel="noopener">YouTube</a></li>{% endif %}
+					{% if PROFILE.whatsapp_link %}<li><a href="https://wa.me/{{ PROFILE.whatsapp_link }}" target="_blank" rel="noopener">WhatsApp</a></li>{% endif %}
+				</ul>
+			</div>
+			<div class="footer-col">
+				<h4 class="footer-title">Subscribe</h4>
+				<p class="muted" style="margin:0 0 8px;color:var(--muted,#94a3b8)">Get updates about new projects and posts. We’ll email a confirmation link.</p>
+				<form method="post" action="{% url 'portfolio:subscribe' %}" class="footer-subscribe" style="display:flex;gap:8px;flex-wrap:wrap">
+					{% csrf_token %}
+					<input type="email" name="email" required placeholder="you@domain.com" aria-label="Email address" style="flex:1;min-width:210px;padding:10px 12px;border-radius:8px;border:1px solid var(--border,#1e293b);background:var(--surface,#0b1222);color:var(--text,#e2e8f0)">
+					<input type="hidden" name="hp" value="">
+					<input type="hidden" name="next" value="{{ request.get_full_path }}">
+					<button type="submit" class="btn" style="padding:10px 14px;border-radius:8px">Subscribe</button>
+				</form>
+				<small class="muted" style="display:block;margin-top:6px;color:var(--muted,#94a3b8)">No spam. Unsubscribe anytime.</small>
+			</div>
+		</div>
+		<div class="container footer-bottom">
+			<small>© {% now "Y" %} {{ PROFILE.name }} — Built with Django</small>
+			<div class="footer-social" aria-label="Social links">
+				{% with gh_fallback=PROFILE.links|get:'github' li_fallback=PROFILE.links|get:'linkedin' %}
+				{% with github=SITE.github_url|default:gh_fallback linkedin=SITE.linkedin_url|default:li_fallback %}
+					{% if SITE.twitter_url %}
+					<a class="social-icon" href="{{ SITE.twitter_url }}" target="_blank" rel="noopener" aria-label="Twitter">
+						<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="currentColor" d="M19.633 7.997c.013.18.013.36.013.54 0 5.49-4.18 11.822-11.822 11.822-2.35 0-4.532-.69-6.368-1.874.33.038.647.051.99.051 1.946 0 3.737-.66 5.164-1.78-1.82-.037-3.353-1.234-3.881-2.882.257.038.514.064.785.064.378 0 .756-.051 1.108-.141-1.908-.377-3.34-2.07-3.34-4.095v-.051c.553.307 1.19.49 1.869.514-1.108-.74-1.834-1.996-1.834-3.416 0-.756.204-1.45.565-2.056 2.044 2.506 5.102 4.147 8.548 4.315-.064-.303-.103-.617-.103-.93 0-2.274 1.844-4.13 4.13-4.13 1.19 0 2.262.49 3.016 1.275.93-.18 1.82-.517 2.614-.98-.307.955-.955 1.756-1.806 2.262.83-.103 1.63-.32 2.37-.64-.553.817-1.248 1.54-2.05 2.122z"/></svg>
+					</a>
+					{% endif %}
+					{% if github %}
+					<a class="social-icon" href="{{ github }}" target="_blank" rel="noopener" aria-label="GitHub">
+						<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.482 0-.237-.01-1.024-.014-1.858-2.782.605-3.369-1.2-3.369-1.2-.455-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.607.069-.607 1.003.07 1.532 1.032 1.532 1.032.892 1.53 2.341 1.088 2.91.833.093-.647.35-1.088.636-1.338-2.22-.253-4.555-1.112-4.555-4.946 0-1.092.39-1.986 1.03-2.686-.104-.253-.447-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.503.337 1.909-1.296 2.748-1.026 2.748-1.026.546 1.378.203 2.397.1 2.65.64.7 1.03 1.594 1.03 2.686 0 3.842-2.338 4.69-4.565 4.938.359.31.678.92.678 1.855 0 1.338-.012 2.419-.012 2.75 0 .267.18.58.688.481A10.019 10.019 0 0 0 22 12.017C22 6.484 17.523 2 12 2Z"/></svg>
+					</a>
+					{% endif %}
+					{% if linkedin %}
+					<a class="social-icon" href="{{ linkedin }}" target="_blank" rel="noopener" aria-label="LinkedIn">
+						<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="currentColor" d="M20.452 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.94v5.666H9.356V9h3.414v1.561h.049c.476-.9 1.637-1.852 3.368-1.852 3.604 0 4.27 2.372 4.27 5.455v6.288zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM7.114 20.452H3.559V9h3.555v11.452z"/></svg>
+					</a>
+					{% endif %}
+					{% if SITE.youtube_url %}
+					<a class="social-icon" href="{{ SITE.youtube_url }}" target="_blank" rel="noopener" aria-label="YouTube">
+						<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="currentColor" d="M23.498 6.186a2.998 2.998 0 0 0-2.112-2.12C19.64 3.5 12 3.5 12 3.5s-7.64 0-9.386.566A2.998 2.998 0 0 0 .502 6.186 31.21 31.21 0 0 0 0 12a31.21 31.21 0 0 0 .502 5.814 2.998 2.998 0 0 0 2.112 2.12C4.36 20.5 12 20.5 12 20.5s7.64 0 9.386-.566a2.998 2.998 0 0 0 2.112-2.12A31.21 31.21 0 0 0 24 12a31.21 31.21 0 0 0-.502-5.814zM9.75 15.5v-7l6 3.5-6 3.5z"/></svg>
+					</a>
+					{% endif %}
+					{% if PROFILE.whatsapp_link %}
+					<a class="social-icon" href="https://wa.me/{{ PROFILE.whatsapp_link }}" target="_blank" rel="noopener" aria-label="WhatsApp">
+						<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="currentColor" d="M20.52 3.48A11.9 11.9 0 0 0 12.04 0C5.47.02.16 5.33.18 11.89c.01 2.1.56 4.16 1.6 5.97L0 24l6.3-1.64a11.87 11.87 0 0 0 5.72 1.47h.05c6.55 0 11.87-5.32 11.89-11.88a11.84 11.84 0 0 0-3.44-8.47zM12.07 21.3h-.04a9.8 9.8 0 0 1-4.99-1.37l-.36-.21-3.74.97 1-3.65-.24-.37a9.81 9.81 0 0 1-1.53-5.28C2.13 6.46 6.47 2.12 12.06 2.1a9.9 9.9 0 0 1 9.93 9.86c-.02 5.47-4.48 9.89-9.92 9.34zM17.2 14.36c-.3-.15-1.76-.87-2.03-.97-.27-.1-.46-.15-.66.15-.19.3-.76.96-.93 1.16-.17.19-.34.22-.64.07-.3-.15-1.26-.46-2.4-1.47-.88-.78-1.47-1.74-1.64-2.04-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.51.15-.17.19-.3.3-.5.1-.19.05-.38-.02-.53-.07-.15-.66-1.6-.9-2.19-.24-.58-.48-.5-.66-.5-.17 0-.36-.02-.55-.02-.19 0-.5.07-.76.38-.26.3-1 1-1 2.46 0 1.46 1.03 2.87 1.17 3.07.15.2 2.04 3.12 4.94 4.37.69.3 1.22.48 1.64.62.69.22 1.32.19 1.81.12.55-.08 1.76-.72 2-1.42.25-.7.25-1.3.17-1.42-.08-.12-.28-.2-.58-.35z"/></svg>
+					</a>
+					{% endif %}
+				{% endwith %}
+				{% endwith %}
+			</div>
+			<nav class="footer-nav">
+				<a href="/privacy/">Privacy</a>
+				<a href="/terms/">Terms</a>
+			</nav>
+		</div>
+	</footer>
+
+	{# Cookie consent banner #}
+	<div id="cookie-consent" class="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie consent" hidden>
+		<div class="container" style="display:flex;align-items:center;gap:14px;justify-content:space-between;flex-wrap:wrap">
+			<p style="margin:0;flex:1;min-width:220px;color:var(--muted)">
+				We use cookies for analytics to improve your experience. You can opt in or continue without analytics.
+			</p>
+			<div style="display:flex;gap:10px">
+				<button id="cookie-decline" class="btn secondary">Decline</button>
+				<button id="cookie-accept" class="btn">Accept</button>
+			</div>
+		</div>
+	</div>
+
+	<script src="{% static 'js/main.js' %}"></script>
+	<!-- Fade-in animation for navigation and footer -->
+	<script>
+window.addEventListener('DOMContentLoaded', function() {
+    var nav = document.querySelector('nav');
+    var footer = document.querySelector('footer');
+    if(nav) {
+        nav.style.opacity = 0;
+        setTimeout(function() {
+            nav.style.transition = 'opacity 0.8s';
+            nav.style.opacity = 1;
+        }, 200);
+    }
+    if(footer) {
+        footer.style.opacity = 0;
+        setTimeout(function() {
+            footer.style.transition = 'opacity 0.8s';
+            footer.style.opacity = 1;
+        }, 400);
+    }
+});
+	</script>
+	<style>
+nav, footer { transition: opacity 0.8s; }
+	</style>
+
+	<script>
+	// Cookie consent + conditional GA loader
+	(function(){
+		const GA_ID = '{{ SITE.analytics_measurement_id|default:GA_MEASUREMENT_ID|default:"" }}';
+		const CONSENT_REQUIRED = {{ SITE.consent_required|default:True|yesno:"true,false" }};
+		function loadGA(){
+			if(!GA_ID) return;
+			if(window.gtag) return; // already loaded
+			const s = document.createElement('script');
+			s.async = true;
+			s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+			document.head.appendChild(s);
+			window.dataLayer = window.dataLayer || [];
+			window.gtag = function(){ dataLayer.push(arguments); };
+			gtag('js', new Date());
+			gtag('config', GA_ID);
+		}
+		function showBanner(){
+			const el = document.getElementById('cookie-consent');
+			if(el) el.hidden = false;
+		}
+		function hideBanner(){
+			const el = document.getElementById('cookie-consent');
+			if(el) el.hidden = true;
+		}
+		document.addEventListener('DOMContentLoaded', function(){
+			const consent = localStorage.getItem('analytics_consent');
+			if(!CONSENT_REQUIRED){
+				loadGA();
+				hideBanner();
+			} else if(consent === 'granted'){
+				loadGA();
+			} else if(consent === 'denied'){
+				// Do nothing
+			} else {
+				showBanner();
+			}
+			const acceptBtn = document.getElementById('cookie-accept');
+			const declineBtn = document.getElementById('cookie-decline');
+			if(acceptBtn){
+				acceptBtn.addEventListener('click', function(){
+					localStorage.setItem('analytics_consent','granted');
+					loadGA();
+					hideBanner();
+				});
+			}
+			if(declineBtn){
+				declineBtn.addEventListener('click', function(){
+					localStorage.setItem('analytics_consent','denied');
+					hideBanner();
+				});
+			}
+		});
+	})();
+	</script>
+	{% block extra_js %}{% endblock %}
+</body>
+</html>

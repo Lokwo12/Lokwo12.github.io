@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static site_extras %}
+{% block title %}Projects — Denis Lokwo{% endblock %}
+{% block content %}
+<section class="container" style="margin-top:48px;">
+    <header style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:12px;">
+        <h2 style="margin:0">Projects</h2>
+        {% if has_filters %}
+            <a class="btn secondary" href="/projects/">Clear filters</a>
+        {% endif %}
+    </header>
+
+    <form method="get" class="project-filter">
+        <input type="hidden" name="page" value="1" />
+        <input type="text" name="search" placeholder="Search projects..." value="{{ search|default:'' }}">
+        <select name="tech">
+            <option value="">All Technologies</option>
+            {% for t in techs %}
+                <option value="{{ t }}" {% if t == selected_tech %}selected{% endif %}>{{ t }}</option>
+            {% endfor %}
+        </select>
+        <select name="category">
+            <option value="">All Categories</option>
+            {% for c in categories %}
+                <option value="{{ c }}" {% if c == selected_category %}selected{% endif %}>{{ c }}</option>
+            {% endfor %}
+        </select>
+        <select name="sort">
+            <option value="date_desc" {% if sort == 'date_desc' %}selected{% endif %}>Newest</option>
+            <option value="date_asc" {% if sort == 'date_asc' %}selected{% endif %}>Oldest</option>
+            <option value="title_asc" {% if sort == 'title_asc' %}selected{% endif %}>Title A–Z</option>
+            <option value="title_desc" {% if sort == 'title_desc' %}selected{% endif %}>Title Z–A</option>
+        </select>
+        <select name="per">
+            {% for n in per_options %}
+                <option value="{{ n }}" {% if per == n %}selected{% endif %}>Show {{ n }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn">Filter</button>
+    </form>
+
+    {% if has_filters %}
+    <div class="filter-chips" aria-label="Active filters">
+        {% if selected_tech %}
+            <a class="chip selected" href="?search={{ search|urlencode }}&category={{ selected_category|urlencode }}">Tech: {{ selected_tech }} ×</a>
+        {% endif %}
+        {% if selected_category %}
+            <a class="chip selected" href="?search={{ search|urlencode }}&tech={{ selected_tech|urlencode }}">Category: {{ selected_category }} ×</a>
+        {% endif %}
+        {% if search %}
+            <a class="chip selected" href="?category={{ selected_category|urlencode }}&tech={{ selected_tech|urlencode }}">Search: “{{ search }}” ×</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="project-list">
+        {% for project in projects %}
+            <div class="project-card">
+                <div class="pc-grid">
+                    <div class="pc-content">
+                        <h3 style="margin:0 0 6px"><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
+                        <div class="badge-list" style="margin-bottom:8px">
+                            {% if project.category %}<span class="chip">{{ project.category }}</span>{% endif %}
+                            <span class="chip">{{ project.date|date:"F Y" }}</span>
+                        </div>
+                        <p style="margin:0 0 10px">{{ project.description|truncatewords:30 }}</p>
+                        {% with techs=project.tech_list %}
+                        {% if techs %}
+                        <div class="badge-list" aria-label="Technologies">
+                            {% for t in techs %}
+                                <a class="chip" href="?tech={{ t|urlencode }}&category={{ selected_category|urlencode }}&search={{ search|urlencode }}">{% tech_icon t 16 %} {{ t }}</a>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        {% endwith %}
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+                            <a href="{{ project.get_absolute_url }}" class="btn" data-ev="case_study_open" data-project="{{ project.title }}" data-slug="{{ project.slug }}">Read case study</a>
+                            {% if project.url %}<a href="{{ project.url }}" class="btn secondary" target="_blank" rel="noopener" data-ev="project_view_live" data-project="{{ project.title }}" data-url="{{ project.url }}">View live</a>{% endif %}
+                        </div>
+                    </div>
+                    {% if project.image %}
+                    <div class="pc-media">
+                        <a href="{{ project.get_absolute_url }}" aria-label="View {{ project.title }}">
+                            <img src="{{ project.image.url }}" alt="{{ project.title }} thumbnail" loading="lazy" decoding="async" fetchpriority="low" width="{{ project.image.width }}" height="{{ project.image.height }}" sizes="(max-width: 880px) 100vw, 300px">
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <p>No projects found.</p>
+        {% endfor %}
+    </div>
+
+    {% if page_obj and paginator %}
+    <nav class="pagination" aria-label="Pagination">
+        {% with q='&search='|add:search|urlencode|add:'&tech='|add:selected_tech|urlencode|add:'&category='|add:selected_category|urlencode|add:'&sort='|add:sort|urlencode|add:'&per='|add:per %}
+        {% if page_obj.has_previous %}
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{{ q }}">Previous</a>
+        {% else %}
+            <span class="page-link disabled">Previous</span>
+        {% endif %}
+        <span class="page-status">Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{{ q }}">Next</a>
+        {% else %}
+            <span class="page-link disabled">Next</span>
+        {% endif %}
+        {% endwith %}
+    </nav>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/projects.js' %}"></script>
+{% endblock %}

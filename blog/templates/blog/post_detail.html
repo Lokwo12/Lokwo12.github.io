@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static site_extras %}
+{% block title %}{{ post.title }} — Blog{% endblock %}
+{% block og_title %}{{ post.title }} — Blog{% endblock %}
+{% block tw_title %}{{ post.title }} — Blog{% endblock %}
+{% block head_meta %}
+        <meta property="og:description" content="{{ post.content|striptags|truncatechars:180 }}">
+        <meta name="twitter:description" content="{{ post.content|striptags|truncatechars:180 }}">
+    {% if post.thumbnail %}
+        {% absolute_url post.thumbnail.url as thumb_abs %}
+        <meta property="og:image" content="{{ thumb_abs }}">
+        <meta name="twitter:image" content="{{ thumb_abs }}">
+    {% else %}
+        <meta property="og:image" content="{% absolute_static 'images/og-default.svg' %}">
+        <meta name="twitter:image" content="{% absolute_static 'images/og-default.svg' %}">
+    {% endif %}
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": "{{ post.title|escapejs }}",
+            "author": {"@type": "Person", "name": "{{ post.author|escapejs }}"},
+            "datePublished": "{{ post.created_at|date:'c' }}",
+            "dateModified": "{{ post.updated_at|date:'c' }}",
+            "mainEntityOfPage": {"@type": "WebPage", "@id": "{{ request.build_absolute_uri }}"}
+        }
+        </script>
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {"@type": "ListItem", "position": 1, "name": "Blog", "item": "{{ request.build_absolute_uri|cut:request.get_full_path }}blog/"},
+                {"@type": "ListItem", "position": 2, "name": "{{ post.title|escapejs }}", "item": "{{ request.build_absolute_uri }}"}
+            ]
+        }
+        </script>
+{% endblock %}
+{% block content %}
+<article class="blog-post container">
+    <nav style="margin-bottom:10px"><a href="/blog/" class="chip">← Back to Blog</a></nav>
+    <header style="margin-bottom:12px">
+        <span class="eyebrow">Article</span>
+        <h1 class="title" style="margin:6px 0 8px">{{ post.title }}</h1>
+        <div class="badge-list" style="margin:0 0 8px">
+            <span class="chip">By {{ post.author }}</span>
+            <span class="chip">{{ post.created_at|date:"F j, Y" }}</span>
+            <span class="chip">{{ reading_time }} min read</span>
+            {% if post.category %}<a class="chip" href="{% url 'blog:post_list_by_category' category=post.category|slugify %}">{{ post.category }}</a>{% endif %}
+        </div>
+    </header>
+    {% if post.thumbnail %}
+    <div class="pd-media" style="margin-bottom:14px"><img src="{{ post.thumbnail.url }}" alt="{{ post.title }} hero" width="{{ post.thumbnail.width }}" height="{{ post.thumbnail.height }}" sizes="(max-width: 880px) 100vw, 360px"></div>
+    {% endif %}
+    <div class="content">{{ post.content|linebreaks }}</div>
+    {% with tags=post.tag_list %}
+    {% if tags %}
+    <div class="badge-list" aria-label="Tags" style="margin-top:12px">
+    {% for t in tags %}
+    <a class="chip" href="{% url 'blog:post_list_by_tag' tag=t|slugify %}">#{{ t }}</a>
+    {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+    <hr style="border:none;border-top:1px solid var(--border);margin:20px 0">
+    <nav style="display:flex;justify-content:space-between;gap:10px">
+        {% if newer %}<a class="btn secondary" href="{{ newer.get_absolute_url }}">← Newer</a>{% else %}<span></span>{% endif %}
+        <a class="btn secondary" href="/blog/">Back to Blog</a>
+        {% if older %}<a class="btn secondary" href="{{ older.get_absolute_url }}">Older →</a>{% else %}<span></span>{% endif %}
+    </nav>
+</article>
+{% endblock %}

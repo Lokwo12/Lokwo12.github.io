@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static site_extras %}
+{% block title %}{{ project.title }} — Project — Denis Lokwo{% endblock %}
+{% block og_title %}{{ project.title }} — Case Study{% endblock %}
+{% block tw_title %}{{ project.title }} — Case Study{% endblock %}
+{% block head_meta %}
+    {% if project.image %}
+    {% absolute_url project.image.url as proj_img %}
+    <meta property="og:image" content="{{ proj_img }}">
+    <meta name="twitter:image" content="{{ proj_img }}">
+    {% else %}
+    <meta property="og:image" content="{% absolute_static 'images/og-default.svg' %}">
+    <meta name="twitter:image" content="{% absolute_static 'images/og-default.svg' %}">
+    {% endif %}
+        <meta property="og:description" content="{{ project.description|truncatechars:180 }}">
+        <meta name="twitter:description" content="{{ project.description|truncatechars:180 }}">
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {"@type": "ListItem", "position": 1, "name": "Projects", "item": "{{ request.build_absolute_uri|cut:request.get_full_path }}projects/"},
+                {"@type": "ListItem", "position": 2, "name": "{{ project.title }}", "item": "{{ request.build_absolute_uri }}"}
+            ]
+        }
+        </script>
+{% endblock %}
+
+{% block content %}
+<section class="container" style="margin-top:36px">
+    <nav style="margin-bottom:10px"><a href="/projects/" class="chip">← Back to Projects</a></nav>
+    <div class="project-detail">
+        <header class="pd-head">
+            <div>
+                <h1 class="title" style="margin:0 0 6px">{{ project.title }}</h1>
+                <div class="badge-list" style="margin:0 0 8px">
+                    <span class="chip">{{ project.category|default:'General' }}</span>
+                    <span class="chip">{{ project.date|date:'F Y' }}</span>
+                </div>
+                {% with techs=project.tech_list %}
+                {% if techs %}
+                <div class="badge-list" style="margin:8px 0 12px">{% for t in techs %}<span class="chip">{% tech_icon t 16 %} {{ t }}</span>{% endfor %}</div>
+                {% endif %}
+                {% endwith %}
+                <div class="cta-row">
+                    {% if project.url %}<a class="btn" href="{{ project.url }}" target="_blank" rel="noopener" data-ev="project_view_live" data-project="{{ project.title }}" data-url="{{ project.url }}">View live</a>{% endif %}
+                    <a class="btn secondary" href="{% url 'portfolio:portfolio_pdf' %}">Download PDF</a>
+                </div>
+            </div>
+            {% if project.image %}
+            <div class="pd-media"><img src="{{ project.image.url }}" alt="{{ project.title }} screenshot" width="{{ project.image.width }}" height="{{ project.image.height }}" sizes="(max-width: 880px) 100vw, 360px"></div>
+            {% endif %}
+        </header>
+
+        <article class="project-card" style="margin-top:16px">
+            <h3 style="margin:0 0 8px">Overview</h3>
+            <p class="lead">{{ project.description|linebreaks }}</p>
+        </article>
+
+        {% if related %}
+        <section style="margin-top:22px">
+            <h3 style="margin:0 0 10px">Related projects</h3>
+            <div class="cards-grid">
+                {% for p in related %}
+                                <article class="project-card">
+                                    <h4 style="margin:0 0 6px"><a href="{{ p.get_absolute_url }}" data-ev="case_study_open" data-project="{{ p.title }}" data-slug="{{ p.slug }}">{{ p.title }}</a></h4>
+                        <p class="meta">{{ p.category|default:'General' }} • {{ p.date|date:'M Y' }}</p>
+                        <p>{{ p.description|truncatewords:22 }}</p>
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

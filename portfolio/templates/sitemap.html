@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static site_extras %}
+{% block title %}HTML Sitemap — Denis Lokwo{% endblock %}
+{% block og_title %}HTML Sitemap — Denis Lokwo{% endblock %}
+{% block tw_title %}HTML Sitemap — Denis Lokwo{% endblock %}
+{% block head_meta %}
+    <meta name="robots" content="index,follow">
+    <meta property="og:description" content="HTML sitemap for quick navigation across sections, articles, and projects.">
+    <meta name="twitter:description" content="HTML sitemap for quick navigation across sections, articles, and projects.">
+{% endblock %}
+{% block content %}
+<section class="container" style="margin-top:48px;">
+    <header class="contact-hero" style="margin-bottom:16px;">
+        <span class="eyebrow">Navigation</span>
+        <h2 class="title" style="margin:4px 0 8px">Sitemap</h2>
+        <p class="lead">Quick links to all major sections, recent posts, categories, tags, and projects.</p>
+    </header>
+
+    <div class="resume-grid" style="margin-top:0">
+        <aside class="resume-side">
+            <div class="resume-card">
+                <h3 class="resume-section-title">Core Sections</h3>
+                <ul class="footer-list">
+                    {% for s in sections %}
+                        <li><a href="{{ s.url }}">{{ s.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            {% if categories %}
+            <div class="resume-card">
+                <h3 class="resume-section-title">Blog Categories</h3>
+                <ul class="footer-list">
+                    {% for c in categories %}
+                        <li><a href="{{ c.url }}">{{ c.label }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if tags %}
+            <div class="resume-card">
+                <h3 class="resume-section-title">Blog Tags</h3>
+                <ul class="footer-list">
+                    {% for t in tags %}
+                        <li><a href="{{ t.url }}">#{{ t.label }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </aside>
+
+        <section class="resume-main">
+            {% if recent_posts %}
+            <div class="resume-card">
+                <h3 class="resume-section-title">Recent Posts</h3>
+                <ul class="footer-list">
+                    {% for p in recent_posts %}
+                        <li>
+                            <a href="{{ p.get_absolute_url }}">{{ p.title }}</a>
+                            <small class="meta"> — {{ p.created_at|date:"F j, Y" }}{% if p.category %} • {{ p.category }}{% endif %}</small>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if projects %}
+            <div class="resume-card">
+                <h3 class="resume-section-title">Projects</h3>
+                <ul class="footer-list">
+                    {% for pr in projects %}
+                        <li>
+                            <a href="{{ pr.get_absolute_url }}">{{ pr.title }}</a>
+                            <small class="meta"> — {{ pr.category|default:'General' }} • {{ pr.date|date:'M Y' }}</small>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </section>
+    </div>
+</section>
+{% endblock %}

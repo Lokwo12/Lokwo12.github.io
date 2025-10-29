@@ -1,0 +1,63 @@
+/* Print/PDF styles for About/Resume */
+@page {
+	size: A4;
+	margin: 20mm 14mm; /* extra top/bottom to account for header/footer */
+	@bottom-right {
+		content: counter(page) " / " counter(pages);
+		font-size: 10pt;
+		color: #555;
+	}
+}
+
+html, body { background: white !important; color: #111; font: 12pt/1.4 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+
+/* Hide navigation/footer UI not needed in resume */
+.site-header, .site-footer, .cookie-banner, .nav, .hero, .resume-actions button { display: none !important; }
+.resume-actions a { display: inline-block; padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; text-decoration: none; color: #111; }
+
+/* Print header/footer elements */
+@media print {
+	.print-header, .print-footer { display: block !important; }
+}
+.print-header, .print-footer { display: none; }
+.print-header { position: fixed; top: 0; left: 0; right: 0; padding: 8pt 0; background: #fff; border-bottom: 1px solid #ddd; }
+.print-header .name { font-size: 16pt; font-weight: 700; }
+.print-header .title { font-size: 11pt; color: #444; }
+.print-header .meta { font-size: 10pt; color: #555; }
+.print-footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 6pt 0; background: #fff; border-top: 1px solid #ddd; font-size: 10pt; color: #555; }
+.print-footer .page-number::after { content: counter(page); }
+.print-footer .total-pages::after { content: counter(pages); }
+
+/* Ensure content clears fixed header/footer */
+@media print {
+	.resume { margin-top: 64pt; margin-bottom: 46pt; }
+}
+
+/* Tighter chips for print */
+.chip { border: 1px solid #999; padding: 2px 6px; border-radius: 10px; font-size: 10pt; color: #111; }
+.badge-list { gap: 6px; }
+
+/* Section spacing and page breaks */
+.resume-card { break-inside: avoid; page-break-inside: avoid; margin-bottom: 10pt; padding: 8pt; border: 1px solid #eee; border-radius: 6px; }
+.resume-section-title { font-size: 14pt; margin-bottom: 6pt; break-after: avoid; page-break-after: avoid; }
+h2, h3 { break-after: avoid; page-break-after: avoid; }
+.lead { font-size: 12pt; }
+
+/* Lists */
+.resume-list { margin: 0; padding-left: 16pt; }
+.resume-list li { margin: 2pt 0; }
+.xp-bullets { padding-left: 16pt; }
+
+/* Images */
+.rh-avatar img, .xp-item img { border-radius: 6px; box-shadow: none; }
+
+/* Columns stack for print */
+.resume-grid { display: block; }
+.resume-side, .resume-main { width: 100%; }
+
+/* Links in print */
+a, a:visited { color: #111; text-decoration: none; }
+a[href^="http"]::after { content: ""; }
+
+/* Avoid image/link orphans */
+img { break-inside: avoid; page-break-inside: avoid; }

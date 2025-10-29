@@ -1,0 +1,15 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+  {{ block.super }}
+  <p class="password-reset-link"><a href="{% url 'admin_password_reset' %}">Forgot password?</a></p>
+<<<<<<< HEAD
+=======
+{% endblock %}
+
+{% block content %}
+  {{ block.super }}
+  <p class="password-reset-link"><a href="{% url 'admin_password_reset' %}">Forgot password?</a></p>
+>>>>>>> 28a634a793a1f685086431c8cec6c79f00d6e9f4
+{% endblock %}
