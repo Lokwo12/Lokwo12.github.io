@@ -281,11 +281,12 @@ if _HAS_JAZZMIN:
 if not DEBUG:
     STORAGES = {
         "staticfiles": {
-            # Temporarily use the non-manifest backend to avoid "Missing staticfiles manifest entry"
-            # errors when the staticfiles manifest isn't present. For best long-term results,
-            # run `python manage.py collectstatic` during your deploy and switch back to
-            # CompressedManifestStaticFilesStorage to enable filename hashing for caching.
-            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+            # Use the manifest-backed backend in production to enable filename hashing
+            # and efficient long-term caching. Ensure `collectstatic` runs during the
+            # build so the manifest is generated. If you previously saw a missing
+            # manifest entry error, run collectstatic as described in the README or
+            # set the Render Build Command to run `python manage.py collectstatic --noinput`.
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
         # Default file storage unchanged (local)
     }
