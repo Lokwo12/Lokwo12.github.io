@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Lokwo12 — Quick Links</title>
+  <!-- Auto-redirect to Render deployment (safe fallback shown below) -->
+  <meta http-equiv="refresh" content="0;url=https://lokwo12-github-io-1.onrender.com">
   <style>
     body{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;background:#f7f9fc;color:#0b1226;padding:2rem}
     .card{background:white;border-radius:8px;padding:1rem;margin:1rem 0;box-shadow:0 1px 3px rgba(2,6,23,.08)}
@@ -14,6 +16,12 @@
 <body>
   <h1>Lokwo12 — Quick Links</h1>
   <p>Quick links to help you open the site locally or reach the Django admin.</p>
+  <noscript>
+    <div class="card">
+      <strong>Automatic redirect in use.</strong>
+      <p>If you are not redirected automatically, <a href="https://lokwo12-github-io-1.onrender.com">click here to open the Render site</a>.</p>
+    </div>
+  </noscript>
 
   <div class="card">
     <a class="button" href="http://127.0.0.1:8000/" target="_blank" rel="noopener">Open site (local)</a>
@@ -39,5 +47,16 @@
   </div>
 
   <footer style="margin-top:2rem;color:#6b7280">Generated: 2025-10-29</footer>
+  <script>
+    // JS fallback: ensure redirect even if meta-refresh is blocked
+    (function(){
+      try{
+        var target = 'https://lokwo12-github-io-1.onrender.com';
+        if(window.location.href !== target){
+          window.location.replace(target);
+        }
+      }catch(e){/* noop */}
+    })();
+  </script>
 </body>
 </html>
