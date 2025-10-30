@@ -17,6 +17,8 @@ from urllib.parse import urlparse
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-dev-key")
+DEBUG = os.environ.get("DEBUG", "") != "False"
 
 # Load environment variables from .env (optional)
 try:
@@ -40,6 +42,8 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 # Allow common local hosts by default; extend via ALLOWED_HOSTS env var for deploys
 _env_hosts = [h for h in os.environ.get('ALLOWED_HOSTS', '').split(',') if h]
 ALLOWED_HOSTS = _env_hosts or ['127.0.0.1', 'localhost', 'testserver']
+if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
+    ALLOWED_HOSTS.append(os.environ['RENDER_EXTERNAL_HOSTNAME'])
 
 
 # Application definition
@@ -75,7 +79,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+]   
 
 ROOT_URLCONF = 'myportfolio.urls'
 
@@ -119,7 +124,7 @@ DATABASES = {
 if os.environ.get('DATABASE_URL'):
     try:
         import dj_database_url
-        DATABASES['default'] = dj_database_url.parse(os.environ['DATABASE_URL'], conn_max_age=600)
+        DATABASES['default'] = dj_database_url.parse(os.environ['DATABASE_URL'], conn_max_age=600, ssl_require=True)
     except Exception:
         # If dj_database_url is missing or parsing fails, keep the default sqlite config
         pass
