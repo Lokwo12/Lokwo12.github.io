@@ -22,4 +22,6 @@ urlpatterns = [
     path('projects/', views.project_list, name='project_list'),
     path('projects/<slug:slug>/', views.project_detail, name='project_detail'),
     path('portfolio.pdf', views.portfolio_pdf, name='portfolio_pdf'),
+    # Health check endpoint used by hosting providers
+    path('health/', views.health, name='health'),
 ]

@@ -94,6 +94,15 @@ def testimonials(request):
 	})
 
 
+def health(request):
+    """Simple health endpoint for readiness/liveness checks.
+
+    Returns HTTP 200 with plain text 'OK'. Render and other platforms can use
+    this endpoint to verify the application is running.
+    """
+    return HttpResponse('OK', content_type='text/plain')
+
+
 def about(request):
 	"""Simple About page.
 	Uses existing styles to present a bio, skills, and highlights.

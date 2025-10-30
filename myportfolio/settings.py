@@ -300,3 +300,33 @@ if not DEBUG:
     SECURE_REFERRER_POLICY = os.environ.get('SECURE_REFERRER_POLICY', 'strict-origin-when-cross-origin')
     # Allow reverse proxy/hosts configuration via env
     CSRF_TRUSTED_ORIGINS = [o for o in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',') if o]
+
+
+    # Basic logging: stream logs to console so Render captures them in service logs.
+    # This keeps configuration minimal while providing useful startup/runtime messages.
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'standard': {
+                'format': '%(asctime)s %(levelname)s %(name)s %(message)s'
+            },
+        },
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+                'formatter': 'standard',
+            },
+        },
+        'root': {
+            'handlers': ['console'],
+            'level': os.environ.get('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['console'],
+                'level': os.environ.get('DJANGO_LOG_LEVEL', 'INFO'),
+                'propagate': False,
+            },
+        },
+    }
