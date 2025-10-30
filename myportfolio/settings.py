@@ -275,10 +275,17 @@ if _HAS_JAZZMIN:
     }
 
 # Production static files storage (hashing + compression)
+# Use the manifest-backed storage in production when collectstatic is run during deploy.
+# As a safe fallback (prevents runtime errors when manifest entries are missing on first deploy),
+# use the non-manifest compressed storage which doesn't require a manifest lookup.
 if not DEBUG:
     STORAGES = {
         "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+            # Temporarily use the non-manifest backend to avoid "Missing staticfiles manifest entry"
+            # errors when the staticfiles manifest isn't present. For best long-term results,
+            # run `python manage.py collectstatic` during your deploy and switch back to
+            # CompressedManifestStaticFilesStorage to enable filename hashing for caching.
+            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
         },
         # Default file storage unchanged (local)
     }
