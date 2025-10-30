@@ -1,0 +1,2 @@
+# This file exists so Git can track the top-level static/ directory referenced by STATICFILES_DIRS
+# You can safely remove this file if you change `STATICFILES_DIRS` in settings.py
