@@ -41,7 +41,7 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 # Allow common local hosts by default; extend via ALLOWED_HOSTS env var for deploys
 _env_hosts = [h for h in os.environ.get('ALLOWED_HOSTS', '').split(',') if h]
-ALLOWED_HOSTS = _env_hosts or ['127.0.0.1', 'localhost', 'testserver']
+ALLOWED_HOSTS = _env_hosts or ['127.0.0.1', 'localhost', 'testserver', 'lokwodenis.me', 'www.lokwodenis.me']
 if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
     ALLOWED_HOSTS.append(os.environ['RENDER_EXTERNAL_HOSTNAME'])
 
@@ -166,11 +166,10 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR, 'static']
+STATIC_ROOT = BASE_DIR, 'staticfiles'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
-STATICFILES_DIRS = [BASE_DIR / 'static',]
+MEDIA_ROOT = BASE_DIR, 'media'
 # Add whitenoise for static serving
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
