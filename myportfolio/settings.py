@@ -70,8 +70,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # WhiteNoise (static files) is enabled in production only
-    *(['whitenoise.middleware.WhiteNoiseMiddleware'] if not DEBUG else []),
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -79,7 +78,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    
 ]   
 
 ROOT_URLCONF = 'myportfolio.urls'
@@ -123,7 +122,8 @@ DATABASES = {
 # the project will continue to use the local SQLite database.
 if os.environ.get('DATABASE_URL'):
     try:
-        import dj_database_url
+        import importlib
+        dj_database_url = importlib.import_module('dj_database_url')
         DATABASES['default'] = dj_database_url.parse(os.environ['DATABASE_URL'], conn_max_age=600, ssl_require=True)
     except Exception:
         # If dj_database_url is missing or parsing fails, keep the default sqlite config
@@ -164,11 +164,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATICFILES_DIRS = [BASE_DIR / 'static']
+
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+STATICFILES_DIRS = [BASE_DIR / 'static',]
+# Add whitenoise for static serving
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
 
 # Development email backend: prints emails to the console by default
 EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
@@ -281,12 +287,11 @@ if _HAS_JAZZMIN:
 if not DEBUG:
     STORAGES = {
         "staticfiles": {
-            # Use the manifest-backed backend in production to enable filename hashing
-            # and efficient long-term caching. Ensure `collectstatic` runs during the
-            # build so the manifest is generated. If you previously saw a missing
-            # manifest entry error, run collectstatic as described in the README or
-            # set the Render Build Command to run `python manage.py collectstatic --noinput`.
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+            # Prefer the manifest-backed backend for filename hashing. As a safe
+            # fallback (for environments where the manifest hasn't been generated
+            # yet), use our non-strict manifest storage which will fall back to
+            # the original filename when an entry is missing.
+            "BACKEND": "myportfolio.storage.NonStrictManifestStaticFilesStorage",
         },
         # Default file storage unchanged (local)
     }
