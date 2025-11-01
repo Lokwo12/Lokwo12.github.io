@@ -166,13 +166,12 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR, 'static']
-STATIC_ROOT = BASE_DIR, 'staticfiles'
+# Look for app static/ directories and also the project-level static/ folder
+STATICFILES_DIRS = [BASE_DIR / 'static']
+# Where `collectstatic` will collect files for production
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR, 'media'
-# Add whitenoise for static serving
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # Development email backend: prints emails to the console by default
