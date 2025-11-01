@@ -31,7 +31,7 @@ urlpatterns = [
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='admin/password_reset_confirm.html'), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='admin/password_reset_complete.html'), name='password_reset_complete'),
 
-    path('admin/', admin.site.urls),
+    path('dashboard-23LokwoAdmin/', admin.site.urls),
     path('', include('portfolio.urls')),
     path('blog/', include('blog.urls')),
     path('sitemap.xml', cache_page(60 * 60 * 24)(sitemap), {'sitemaps': {
